@@ -60,6 +60,8 @@ public class MatrixOperations {
         return copy;
     }
 
+    // File: MatrixOperations.java (修改后的 checkRemoving 方法)
+
     public static ClearRow checkRemoving(final int[][] matrix) {
         int[][] tmp = new int[matrix.length][matrix[0].length];
         Deque<int[]> newRows = new ArrayDeque<>();
@@ -88,8 +90,31 @@ public class MatrixOperations {
                 break;
             }
         }
-        int scoreBonus = 50 * clearedRows.size() * clearedRows.size();
-        return new ClearRow(clearedRows.size(), tmp, scoreBonus);
+
+        // ⭐️ 核心修改：实现标准 Tetris 得分逻辑 ⭐️
+        int linesRemoved = clearedRows.size();
+        int scoreBonus = 0;
+
+        switch (linesRemoved) {
+            case 1: // Single
+                scoreBonus = 100;
+                break;
+            case 2: // Double
+                scoreBonus = 300;
+                break;
+            case 3: // Triple
+                scoreBonus = 500;
+                break;
+            case 4: // Tetris!
+                scoreBonus = 800;
+                break;
+            default:
+                scoreBonus = 0;
+                break;
+        }
+
+        // 实例化 ClearRow 时，传入计算出的 scoreBonus
+        return new ClearRow(linesRemoved, tmp, scoreBonus);
     }
 
     public static List<int[][]> deepCopyList(List<int[][]> list){
