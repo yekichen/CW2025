@@ -81,20 +81,25 @@ public class SimpleBoard implements Board {
         }
     }
 
+    // File: SimpleBoard.java (Modified createNewBrick method)
+
     @Override
     public boolean createNewBrick() {
         Brick currentBrick = brickGenerator.getBrick();
         brickRotator.setBrick(currentBrick);
 
-        // 方块生成在顶部
-        currentOffset = new Point(4, 0);
+        // 1. X 轴 (居中): 我们保持原始代码中使用的 X=4
+        int startX = 4;
 
-        return MatrixOperations.intersect(currentGameMatrix,
-                brickRotator.getCurrentShape(),
-                (int) currentOffset.getX(),
-                (int) currentOffset.getY());
+        // 2. ⭐️ 自动调整 Y 轴 (最顶行) ⭐️
+        // 将方块的左上角放置在数组的第一个索引 (Y=0)。
+        // 这是在不引起 ArrayOutOfBoundsException 的情况下，能达到的“最上方”位置。
+        int startY = 0;
+
+        currentOffset = new Point(startX, startY);
+
+        return MatrixOperations.intersect(currentGameMatrix, brickRotator.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY());
     }
-
 
     @Override
     public int[][] getBoardMatrix() {

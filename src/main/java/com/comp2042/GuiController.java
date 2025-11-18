@@ -18,8 +18,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.net.URL;
@@ -42,11 +40,15 @@ public class GuiController implements Initializable {
     private GameOverPanel gameOverPanel;
 
     private Rectangle[][] displayMatrix;
+
     private InputEventListener eventListener;
+
     private Rectangle[][] rectangles;
+
     private Timeline timeLine;
 
     private final BooleanProperty isPause = new SimpleBooleanProperty();
+
     private final BooleanProperty isGameOver = new SimpleBooleanProperty();
 
     @Override
@@ -54,18 +56,9 @@ public class GuiController implements Initializable {
         Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
         gamePanel.setFocusTraversable(true);
         gamePanel.requestFocus();
-
         gamePanel.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-                // ✅ 空格键暂停 / 恢复
-                if (keyEvent.getCode() == KeyCode.SPACE) {
-                    togglePause();
-                    keyEvent.consume();
-                    return;
-                }
-
-                // 游戏运行中允许控制
                 if (isPause.getValue() == Boolean.FALSE && isGameOver.getValue() == Boolean.FALSE) {
                     if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
                         refreshBrick(eventListener.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
@@ -84,14 +77,11 @@ public class GuiController implements Initializable {
                         keyEvent.consume();
                     }
                 }
-
-                // 新游戏
                 if (keyEvent.getCode() == KeyCode.N) {
                     newGame(null);
                 }
             }
         });
-
         gameOverPanel.setVisible(false);
 
         final Reflection reflection = new Reflection();
@@ -120,11 +110,10 @@ public class GuiController implements Initializable {
                 brickPanel.add(rectangle, j, i);
             }
         }
-
         brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
         brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
 
-        // 游戏主循环
+
         timeLine = new Timeline(new KeyFrame(
                 Duration.millis(400),
                 ae -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))
@@ -134,18 +123,39 @@ public class GuiController implements Initializable {
     }
 
     private Paint getFillColor(int i) {
-        return switch (i) {
-            case 0 -> Color.TRANSPARENT;
-            case 1 -> Color.AQUA;
-            case 2 -> Color.BLUEVIOLET;
-            case 3 -> Color.DARKGREEN;
-            case 4 -> Color.YELLOW;
-            case 5 -> Color.RED;
-            case 6 -> Color.BEIGE;
-            case 7 -> Color.BURLYWOOD;
-            default -> Color.WHITE;
-        };
+        Paint returnPaint;
+        switch (i) {
+            case 0:
+                returnPaint = Color.TRANSPARENT;
+                break;
+            case 1:
+                returnPaint = Color.AQUA;
+                break;
+            case 2:
+                returnPaint = Color.BLUEVIOLET;
+                break;
+            case 3:
+                returnPaint = Color.DARKGREEN;
+                break;
+            case 4:
+                returnPaint = Color.YELLOW;
+                break;
+            case 5:
+                returnPaint = Color.RED;
+                break;
+            case 6:
+                returnPaint = Color.BEIGE;
+                break;
+            case 7:
+                returnPaint = Color.BURLYWOOD;
+                break;
+            default:
+                returnPaint = Color.WHITE;
+                break;
+        }
+        return returnPaint;
     }
+
 
     private void refreshBrick(ViewData brick) {
         if (isPause.getValue() == Boolean.FALSE) {
@@ -191,7 +201,6 @@ public class GuiController implements Initializable {
     }
 
     public void bindScore(IntegerProperty integerProperty) {
-        // Score binding placeholder (not required for pause)
     }
 
     public void gameOver() {
@@ -208,52 +217,9 @@ public class GuiController implements Initializable {
         timeLine.play();
         isPause.setValue(Boolean.FALSE);
         isGameOver.setValue(Boolean.FALSE);
-        groupNotification.getChildren().clear(); // 清除任何暂停提示
     }
 
     public void pauseGame(ActionEvent actionEvent) {
         gamePanel.requestFocus();
     }
-
-    // ✅ 新增：暂停/恢复切换逻辑
-    private void togglePause() {
-        if (isPause.get()) {
-            // 恢复
-            timeLine.play();
-            isPause.set(false);
-            groupNotification.getChildren().clear();
-            System.out.println("Game Resumed");
-        } else {
-            // 暂停
-            timeLine.pause();
-            isPause.set(true);
-            System.out.println("Game Paused");
-            showPauseOverlay();
-        }
-        gamePanel.requestFocus();
-    }
-
-    // ✅ 居中显示“PAUSED”，无背景
-    private void showPauseOverlay() {
-        groupNotification.getChildren().clear();
-
-        Text pausedText = new Text("PAUSED");
-        pausedText.setFill(Color.WHITE);
-        pausedText.setFont(Font.font("Arial", FontWeight.BOLD, 48));
-
-        // 绑定X、Y，使文字始终居中
-        pausedText.xProperty().bind(gamePanel.widthProperty()
-                .subtract(pausedText.layoutBoundsProperty().get().getWidth())
-                .divide(2));
-
-        pausedText.yProperty().bind(gamePanel.heightProperty()
-                .subtract(pausedText.layoutBoundsProperty().get().getHeight())
-                .divide(2)
-                .add(pausedText.getLayoutBounds().getHeight() / 2));
-
-        groupNotification.getChildren().add(pausedText);
-    }
-
-
-
 }
