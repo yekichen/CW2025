@@ -41,4 +41,12 @@
     <bottom>
         <Group fx:id="groupNotification"/>
     </bottom>
+    <!-- Pause Button -->
+    <Button fx:id="pauseButton"
+            text="Pause"
+            onAction="#pauseGame"
+            layoutX="420"
+            layoutY="10"
+            prefWidth="80"/>
+
 </BorderPane>

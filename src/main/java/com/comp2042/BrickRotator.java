@@ -14,6 +14,10 @@ public class BrickRotator {
     }
 
     public int[][] getCurrentShape() {
+        // ⭐️ 修正：如果 brick 为空 (Game Over 状态)，则返回一个空的 0x0 矩阵 ⭐️
+        if (brick == null) {
+            return new int[0][0];
+        }
         return brick.getShapeMatrix().get(currentShape);
     }
 
@@ -26,5 +30,11 @@ public class BrickRotator {
         currentShape = 0;
     }
 
+    /**
+     * ⭐️ 新增方法：清除当前方块数据（用于 Game Over 时） ⭐️
+     */
+    public void clearBrick() {
+        this.brick = null;
+    }
 
 }

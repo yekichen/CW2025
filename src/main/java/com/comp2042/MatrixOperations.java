@@ -1,25 +1,34 @@
 package com.comp2042;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
+import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class MatrixOperations {
 
+    private MatrixOperations() {}
 
-    //We don't want to instantiate this utility class
-    private MatrixOperations(){
+    /**
+     * 检查 shape 是否与背景矩阵冲突
+     * 参数顺序固定为：
+     *   matrix[row][col]
+     *   shape[row][col]
+     *   offsetCol = x
+     *   offsetRow = y
+     */
+    public static boolean intersect(final int[][] matrix, final int[][] brick,
+                                    int offsetCol, int offsetRow) {
 
-    }
+        for (int r = 0; r < brick.length; r++) {
+            for (int c = 0; c < brick[r].length; c++) {
 
-    public static boolean intersect(final int[][] matrix, final int[][] brick, int x, int y) {
-        for (int i = 0; i < brick.length; i++) {
-            for (int j = 0; j < brick[i].length; j++) {
-                int targetX = x + i;
-                int targetY = y + j;
-                if (brick[j][i] != 0 && (checkOutOfBound(matrix, targetX, targetY) || matrix[targetY][targetX] != 0)) {
+                if (brick[r][c] == 0) continue;
+
+                int targetRow = offsetRow + r;
+                int targetCol = offsetCol + c;
+
+                if (isOutOfBounds(matrix, targetCol, targetRow) ||
+                        matrix[targetRow][targetCol] != 0) {
                     return true;
                 }
             }
@@ -27,98 +36,92 @@ public class MatrixOperations {
         return false;
     }
 
-    private static boolean checkOutOfBound(int[][] matrix, int targetX, int targetY) {
-        boolean returnValue = true;
-        if (targetX >= 0 && targetY < matrix.length && targetX < matrix[targetY].length) {
-            returnValue = false;
-        }
-        return returnValue;
+    private static boolean isOutOfBounds(int[][] matrix, int col, int row) {
+
+        if (row < 0 || row >= matrix.length) return true;
+        if (col < 0 || col >= matrix[row].length) return true;
+
+        return false;
     }
 
+    /** 深拷贝矩阵 */
     public static int[][] copy(int[][] original) {
-        int[][] myInt = new int[original.length][];
-        for (int i = 0; i < original.length; i++) {
-            int[] aMatrix = original[i];
-            int aLength = aMatrix.length;
-            myInt[i] = new int[aLength];
-            System.arraycopy(aMatrix, 0, myInt[i], 0, aLength);
+        int[][] result = new int[original.length][];
+        for (int r = 0; r < original.length; r++) {
+            result[r] = Arrays.copyOf(original[r], original[r].length);
         }
-        return myInt;
+        return result;
     }
 
-    public static int[][] merge(int[][] filledFields, int[][] brick, int x, int y) {
-        int[][] copy = copy(filledFields);
-        for (int i = 0; i < brick.length; i++) {
-            for (int j = 0; j < brick[i].length; j++) {
-                int targetX = x + i;
-                int targetY = y + j;
-                if (brick[j][i] != 0) {
-                    copy[targetY][targetX] = brick[j][i];
+    /** 合并方块进入背景 */
+    public static int[][] merge(int[][] matrix, int[][] brick, int offsetCol, int offsetRow) {
+
+        int[][] result = copy(matrix);
+
+        for (int r = 0; r < brick.length; r++) {
+            for (int c = 0; c < brick[r].length; c++) {
+
+                if (brick[r][c] == 0) continue;
+
+                int targetRow = offsetRow + r;
+                int targetCol = offsetCol + c;
+
+                if (!isOutOfBounds(result, targetCol, targetRow)) {
+                    result[targetRow][targetCol] = brick[r][c];
                 }
             }
         }
-        return copy;
+        return result;
     }
 
-    // File: MatrixOperations.java (修改后的 checkRemoving 方法)
-
+    /** 清除已满的行 */
     public static ClearRow checkRemoving(final int[][] matrix) {
-        int[][] tmp = new int[matrix.length][matrix[0].length];
-        Deque<int[]> newRows = new ArrayDeque<>();
-        List<Integer> clearedRows = new ArrayList<>();
 
-        for (int i = 0; i < matrix.length; i++) {
-            int[] tmpRow = new int[matrix[i].length];
-            boolean rowToClear = true;
-            for (int j = 0; j < matrix[0].length; j++) {
-                if (matrix[i][j] == 0) {
-                    rowToClear = false;
+        List<int[]> rows = new ArrayList<>();
+        int cleared = 0;
+
+        for (int r = 0; r < matrix.length; r++) {
+            boolean full = true;
+            for (int c = 0; c < matrix[r].length; c++) {
+                if (matrix[r][c] == 0) {
+                    full = false;
+                    break;
                 }
-                tmpRow[j] = matrix[i][j];
             }
-            if (rowToClear) {
-                clearedRows.add(i);
+            if (full) {
+                cleared++;
             } else {
-                newRows.add(tmpRow);
-            }
-        }
-        for (int i = matrix.length - 1; i >= 0; i--) {
-            int[] row = newRows.pollLast();
-            if (row != null) {
-                tmp[i] = row;
-            } else {
-                break;
+                rows.add(matrix[r]);
             }
         }
 
-        // ⭐️ 核心修改：实现标准 Tetris 得分逻辑 ⭐️
-        int linesRemoved = clearedRows.size();
-        int scoreBonus = 0;
+        int[][] result = new int[matrix.length][matrix[0].length];
 
-        switch (linesRemoved) {
-            case 1: // Single
-                scoreBonus = 100;
-                break;
-            case 2: // Double
-                scoreBonus = 300;
-                break;
-            case 3: // Triple
-                scoreBonus = 500;
-                break;
-            case 4: // Tetris!
-                scoreBonus = 800;
-                break;
-            default:
-                scoreBonus = 0;
-                break;
+        int idx = matrix.length - 1;
+
+        for (int i = rows.size() - 1; i >= 0; i--) {
+            result[idx--] = rows.get(i);
         }
 
-        // 实例化 ClearRow 时，传入计算出的 scoreBonus
-        return new ClearRow(linesRemoved, tmp, scoreBonus);
+        while (idx >= 0) {
+            result[idx--] = new int[matrix[0].length];
+        }
+
+        // 俄罗斯方块标准计分
+        int bonus = switch (cleared) {
+            case 1 -> 100;
+            case 2 -> 300;
+            case 3 -> 500;
+            case 4 -> 800;
+            default -> 0;
+        };
+
+        return new ClearRow(cleared, result, bonus);
     }
-
-    public static List<int[][]> deepCopyList(List<int[][]> list){
-        return list.stream().map(MatrixOperations::copy).collect(Collectors.toList());
+    public static List<int[][]> deepCopyList(List<int[][]> list) {
+        return list.stream()
+                .map(MatrixOperations::copy)
+                .collect(Collectors.toList());
     }
 
 }

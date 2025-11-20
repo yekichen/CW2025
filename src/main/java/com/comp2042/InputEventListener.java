@@ -11,4 +11,7 @@ public interface InputEventListener {
     ViewData onRotateEvent(MoveEvent event);
 
     void createNewGame();
+
+    // ⭐ 新增的暂停切换方法
+    void togglePause();
 }
