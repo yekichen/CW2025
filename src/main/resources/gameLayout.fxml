@@ -1,52 +1,42 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.Group?>
-<?import javafx.geometry.*?>
 <?import com.comp2042.GameOverPanel?>
-<?import java.lang.String?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<?import java.net.URL?>
+<Pane fx:controller="com.comp2042.GuiController"
+      xmlns:fx="http://javafx.com/fxml">
 
-<BorderPane fx:id="root" xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.comp2042.GuiController"
-            stylesheets="@window_style.css">
+    <GridPane fx:id="brickPanel" vgap="1" hgap="1"/>
 
-    <center>
-        <StackPane alignment="CENTER">
-            <BorderPane fx:id="gameBoard" prefWidth="320" prefHeight="640"
-                        styleClass="gameBoard">
-                <center>
-                    <GridPane fx:id="gamePanel" hgap="1" vgap="1"/>
-                </center>
-            </BorderPane>
+    <BorderPane styleClass="gameBoard" fx:id="gameBoard">
+        <center>
+            <!-- 用 StackPane 层叠 gamePanel 和 PAUSED -->
+            <StackPane>
 
-            <GridPane fx:id="fallingBrickPanel" hgap="1" vgap="1" managed="false"/>
+                <GridPane fx:id="gamePanel" vgap="1" hgap="1"/>
+                <!-- PAUSED 字样，会自动在蓝色框中间 -->
+                <Text fx:id="pauseText"
+                      text="PAUSED"
+                      visible="false"
+                      style="-fx-font-size: 48px; -fx-fill: white; -fx-font-weight: bold;"
+                      opacity="0.85"/>
+            </StackPane>
+        </center>
+    </BorderPane>
 
-            <GameOverPanel fx:id="gameOverPanel" visible="false"/>
-        </StackPane>
-    </center>
-
-    <right>
-        <VBox spacing="20" alignment="TOP_CENTER" prefWidth="200" style="-fx-padding:20;">
-            <Text text="SCORE" styleClass="scoreClass" />
-            <Text fx:id="scoreText" text="0000000" styleClass="scoreClass"/>
-
-            <Text text="NEXT" styleClass="scoreClass"/>
-
-            <GridPane fx:id="nextBlockPanel" hgap="3" vgap="3"/>
+    <Group fx:id="groupNotification" layoutX="14" layoutY="203">
+        <VBox alignment="CENTER">
+            <GameOverPanel fx:id="gameOverPanel"/>
         </VBox>
-    </right>
+    </Group>
 
-    <bottom>
-        <Group fx:id="groupNotification"/>
-    </bottom>
-    <!-- Pause Button -->
-    <Button fx:id="pauseButton"
-            text="Pause"
-            onAction="#pauseGame"
-            layoutX="420"
-            layoutY="10"
-            prefWidth="80"/>
 
-</BorderPane>
+
+    <stylesheets>
+        <URL value="@window_style.css"/>
+    </stylesheets>
+
+</Pane>
