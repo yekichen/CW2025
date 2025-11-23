@@ -23,7 +23,9 @@
                       visible="false"
                       style="-fx-font-size: 48px; -fx-fill: white; -fx-font-weight: bold;"
                       opacity="0.85"/>
+
             </StackPane>
+
         </center>
     </BorderPane>
 
@@ -38,5 +40,11 @@
     <stylesheets>
         <URL value="@window_style.css"/>
     </stylesheets>
+    <Label fx:id="scoreLabel"
+           text="Score: 0"
+           layoutX="250"
+           layoutY="50"
+           style="-fx-font-size:24px; -fx-text-fill:white;"/>
+
 
 </Pane>

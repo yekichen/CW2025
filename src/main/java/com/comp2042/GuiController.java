@@ -22,12 +22,19 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+import javafx.scene.control.Label;
+import javafx.beans.property.IntegerProperty;
+
+
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class GuiController implements Initializable {
 
     private static final int BRICK_SIZE = 20;
+
+    @FXML
+    private Label scoreLabel;
 
     @FXML
     private GridPane gamePanel;
@@ -233,7 +240,9 @@ public class GuiController implements Initializable {
         this.eventListener = eventListener;
     }
 
-    public void bindScore(IntegerProperty integerProperty) {}
+    public void bindScore(IntegerProperty scoreintegerProperty) {
+        scoreLabel.textProperty().bind(scoreintegerProperty.asString("Score: %d"));
+    }
 
     public void gameOver() {
         timeLine.stop();
