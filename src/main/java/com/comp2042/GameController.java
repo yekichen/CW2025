@@ -6,6 +6,9 @@ public class GameController implements InputEventListener {
 
     private final GuiController viewGuiController;
 
+    private boolean isPaused = false;
+
+
     public GameController(GuiController c) {
         viewGuiController = c;
         board.createNewBrick();
@@ -62,4 +65,22 @@ public class GameController implements InputEventListener {
         board.newGame();
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
     }
+
+    @Override
+    public void onHardDrop() {
+        board.hardDrop();
+        board.mergeBrickToBackground();
+        board.clearRows();
+        board.createNewBrick();
+
+        // 刷新背景（颜色）
+        viewGuiController.refreshGameBackground(board.getBoardMatrix());
+
+        // ⭐⭐ 刷新前景（位置 + 形状）—— 关键
+        viewGuiController.refreshBrick(board.getViewData());
+    }
+
+
+
+
 }

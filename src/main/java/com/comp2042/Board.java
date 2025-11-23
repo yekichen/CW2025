@@ -14,7 +14,7 @@ public interface Board {
 
     int[][] getBoardMatrix();
 
-    ViewData getViewData();
+    ViewData    getViewData();
 
     void mergeBrickToBackground();
 
@@ -23,4 +23,6 @@ public interface Board {
     Score getScore();
 
     void newGame();
+
+    void hardDrop();
 }

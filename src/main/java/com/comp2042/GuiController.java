@@ -54,7 +54,7 @@ public class GuiController implements Initializable {
 
     private Rectangle[][] rectangles;
 
-    private Timeline timeLine;
+    public Timeline timeLine;
 
     private final BooleanProperty isPause = new SimpleBooleanProperty(false);
     private final BooleanProperty isGameOver = new SimpleBooleanProperty(false);
@@ -103,6 +103,11 @@ public class GuiController implements Initializable {
                 if (keyEvent.getCode() == KeyCode.N) {
                     newGame(null);
                 }
+                if (keyEvent.getCode() == KeyCode.SPACE) {
+                    eventListener.onHardDrop();
+                }
+
+
             }
         });
 
@@ -184,7 +189,7 @@ public class GuiController implements Initializable {
         };
     }
 
-    private void refreshBrick(ViewData brick) {
+    public void refreshBrick(ViewData brick) {
         if (!isPause.get()) {
             brickPanel.setLayoutX(+12.5 +gamePanel.getLayoutX() + brick.getxPosition() * (brickPanel.getVgap() + BRICK_SIZE));
             brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + brick.getyPosition() * (brickPanel.getHgap() + BRICK_SIZE));
