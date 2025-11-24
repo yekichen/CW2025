@@ -40,13 +40,17 @@ public class GuiController implements Initializable {
     private GridPane gamePanel;
 
     @FXML
-    private Group groupNotification;
+    public Group groupNotification;
 
     @FXML
     private GridPane brickPanel;
 
     @FXML
     private GameOverPanel gameOverPanel;
+
+    @FXML
+    private Label comboLabel;
+
 
     // 新增：暂停图层
     @FXML
@@ -239,6 +243,14 @@ public class GuiController implements Initializable {
     public void setEventListener(InputEventListener eventListener) {
         this.eventListener = eventListener;
     }
+    // ⭐⭐⭐ 新增 Combo 显示更新方法
+    public void updateCombo(int combo) {
+        if (combo <= 1) {
+            comboLabel.setText("");
+        } else {
+            comboLabel.setText("Combo ×" + combo + " 🔥");
+        }
+    }
 
     public void bindScore(IntegerProperty scoreintegerProperty) {
         scoreLabel.textProperty().bind(scoreintegerProperty.asString("Score: %d"));
@@ -269,4 +281,6 @@ public class GuiController implements Initializable {
     public void pauseGame(ActionEvent actionEvent) {
         gamePanel.requestFocus();
     }
+
+
 }

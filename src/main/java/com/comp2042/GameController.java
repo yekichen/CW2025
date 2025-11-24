@@ -8,6 +8,8 @@ public class GameController implements InputEventListener {
 
     private boolean isPaused = false;
 
+    private int combo = 0;
+
 
     public GameController(GuiController c) {
         viewGuiController = c;
@@ -19,27 +21,63 @@ public class GameController implements InputEventListener {
 
     @Override
     public DownData onDownEvent(MoveEvent event) {
+
         boolean canMove = board.moveBrickDown();
         ClearRow clearRow = null;
+
         if (!canMove) {
+
+            // 1. 落地合并
             board.mergeBrickToBackground();
+
+            // 2. 检查是否消行
             clearRow = board.clearRows();
+
             if (clearRow.getLinesRemoved() > 0) {
-                board.getScore().add(clearRow.getScoreBonus());
+
+                int lines = clearRow.getLinesRemoved();
+
+                // ⭐ 固定行消除加分：每行 200
+                int baseScore = lines * 200;
+
+                // ⭐ combo 连击：combo² × 50
+                combo++;
+                int comboBonus = combo * combo * 50;
+
+                // ⭐ 给分
+                board.getScore().add(baseScore + comboBonus);
+
+                // ⭐ 更新 UI 显示 Combo
+                viewGuiController.updateCombo(combo);
+
+            } else {
+
+                // ⭐ 没有消行 → combo 清零
+                combo = 0;
+
+                // UI 也要清空 combo 显示
+                viewGuiController.updateCombo(combo);
             }
+
+            // 3. 生成下一块砖
             if (board.createNewBrick()) {
                 viewGuiController.gameOver();
             }
 
+            // 4. 刷新背景
             viewGuiController.refreshGameBackground(board.getBoardMatrix());
 
         } else {
+
+            // ⭐ 普通下落（按键触发）加分
             if (event.getEventSource() == EventSource.USER) {
                 board.getScore().add(1);
             }
         }
+
         return new DownData(clearRow, board.getViewData());
     }
+
 
     @Override
     public ViewData onLeftEvent(MoveEvent event) {
@@ -68,15 +106,47 @@ public class GameController implements InputEventListener {
 
     @Override
     public void onHardDrop() {
+
+        if (isPaused) return;
+
+        // ⭐ 立即下降
         board.hardDrop();
+
+        // ⭐ 落地 & 消行
         board.mergeBrickToBackground();
-        board.clearRows();
-        board.createNewBrick();
+        ClearRow clearRow = board.clearRows();
 
-        // 刷新背景（颜色）
+        if (clearRow.getLinesRemoved() > 0) {
+
+            int lines = clearRow.getLinesRemoved();
+            int baseScore = lines * 200;
+
+            // ⭐ combo + 处理
+            combo++;
+            int comboBonus = combo * combo * 50;
+
+            board.getScore().add(baseScore + comboBonus);
+
+            // ⭐ 显示 Combo
+            viewGuiController.updateCombo(combo);
+
+            // ⭐ 显示 “+分数” 动画（和 soft drop 一样）
+            NotificationPanel np = new NotificationPanel("+" + (baseScore + comboBonus));
+            viewGuiController.groupNotification.getChildren().add(np);
+            np.showScore(viewGuiController.groupNotification.getChildren());
+        }
+        else {
+            combo = 0;
+            viewGuiController.updateCombo(combo);
+        }
+
+        // ⭐ 新砖
+        if (board.createNewBrick()) {
+            viewGuiController.gameOver();
+            return;
+        }
+
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
-
-        // ⭐⭐ 刷新前景（位置 + 形状）—— 关键
         viewGuiController.refreshBrick(board.getViewData());
     }
 

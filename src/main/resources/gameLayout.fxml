@@ -45,6 +45,12 @@
            layoutX="250"
            layoutY="50"
            style="-fx-font-size:24px; -fx-text-fill:white;"/>
+    <Label fx:id="comboLabel"
+
+           layoutX="500"
+           layoutY="90"
+           style="-fx-font-size: 22px; -fx-text-fill: yellow; -fx-font-weight:bold;"/>
+
 
 
 </Pane>
