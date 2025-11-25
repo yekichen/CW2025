@@ -24,6 +24,10 @@ import javafx.util.Duration;
 
 import javafx.scene.control.Label;
 import javafx.beans.property.IntegerProperty;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import java.io.File;
+
 
 
 import java.net.URL;
@@ -57,6 +61,9 @@ public class GuiController implements Initializable {
     private StackPane pauseLayer;
 
     @FXML
+
+    private MediaPlayer bgmPlayer;
+
     private Text pauseText;
 
     private Rectangle[][] displayMatrix;
@@ -67,11 +74,16 @@ public class GuiController implements Initializable {
 
     public Timeline timeLine;
 
+
+
+
     private final BooleanProperty isPause = new SimpleBooleanProperty(false);
     private final BooleanProperty isGameOver = new SimpleBooleanProperty(false);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+
         Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
 
         gamePanel.setFocusTraversable(true);
@@ -122,6 +134,7 @@ public class GuiController implements Initializable {
             }
         });
 
+
         // GameOver 隐藏
         gameOverPanel.setVisible(false);
 
@@ -136,6 +149,7 @@ public class GuiController implements Initializable {
         reflection.setFraction(0.8);
         reflection.setTopOpacity(0.9);
         reflection.setTopOffset(-12);
+        initBGM();
     }
 
     // 暂停 / 恢复
@@ -148,9 +162,13 @@ public class GuiController implements Initializable {
         if (nowPaused) {
             timeLine.pause();
             if (pauseText != null) pauseText.setVisible(true);
+            // ⭐ 暂停 BGM
+            if (bgmPlayer != null) bgmPlayer.pause();
         } else {
             timeLine.play();
             if (pauseText != null) pauseText.setVisible(false);
+            // ⭐ 暂停 BGM
+            if (bgmPlayer != null) bgmPlayer.play();
         }
     }
 
@@ -175,7 +193,7 @@ public class GuiController implements Initializable {
             }
         }
 
-        brickPanel.setLayoutX(+12.5 +gamePanel.getLayoutX() + brick.getxPosition() * (brickPanel.getVgap() + BRICK_SIZE));
+        brickPanel.setLayoutX(+12.5 + gamePanel.getLayoutX() + brick.getxPosition() * (brickPanel.getVgap() + BRICK_SIZE));
         brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + brick.getyPosition() * (brickPanel.getHgap() + BRICK_SIZE));
 
         timeLine = new Timeline(new KeyFrame(
@@ -202,7 +220,7 @@ public class GuiController implements Initializable {
 
     public void refreshBrick(ViewData brick) {
         if (!isPause.get()) {
-            brickPanel.setLayoutX(+12.5 +gamePanel.getLayoutX() + brick.getxPosition() * (brickPanel.getVgap() + BRICK_SIZE));
+            brickPanel.setLayoutX(+12.5 + gamePanel.getLayoutX() + brick.getxPosition() * (brickPanel.getVgap() + BRICK_SIZE));
             brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + brick.getyPosition() * (brickPanel.getHgap() + BRICK_SIZE));
 
             for (int i = 0; i < brick.getBrickData().length; i++) {
@@ -243,6 +261,7 @@ public class GuiController implements Initializable {
     public void setEventListener(InputEventListener eventListener) {
         this.eventListener = eventListener;
     }
+
     // ⭐⭐⭐ 新增 Combo 显示更新方法
     public void updateCombo(int combo) {
         if (combo <= 1) {
@@ -281,6 +300,18 @@ public class GuiController implements Initializable {
     public void pauseGame(ActionEvent actionEvent) {
         gamePanel.requestFocus();
     }
-
+    private void initBGM() {
+        try {
+            String bgmPath = "src/main/resources/audio/bgm.mp3";
+            Media bgm = new Media(new File(bgmPath).toURI().toString());
+            bgmPlayer = new MediaPlayer(bgm);
+            bgmPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+            bgmPlayer.setVolume(0.5);
+            bgmPlayer.play();
+        } catch (Exception e) {
+            System.out.println("加载 BGM 失败：" + e.getMessage());
+        }
+    }
 
 }
+

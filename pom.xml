@@ -12,9 +12,18 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>5.12.1</junit.version>
+        <javafx.version>21.0.6</javafx.version>
+
     </properties>
 
     <dependencies>
+        <!-- ⭐ 必须添加：JavaFX Media 模块（用于 BGM） -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-media</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
@@ -61,6 +70,13 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>com.comp2042.Main</mainClass>
+                            <!-- ⭐ 声明 JavaFX 模块（必须包含 media） -->
+                            <modules>
+                                <module>javafx.controls</module>
+                                <module>javafx.fxml</module>
+                                <module>javafx.media</module> <!-- 修复 MediaPlayer 报错 -->
+                            </modules>
+
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>
