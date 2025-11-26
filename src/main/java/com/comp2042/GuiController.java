@@ -55,6 +55,11 @@ public class GuiController implements Initializable {
     @FXML
     private Label comboLabel;
 
+    //下一个方块的预览
+    @FXML
+    private GridPane nextPanel;
+
+    private Rectangle[][] nextRectangles;
 
     // 新增：暂停图层
     @FXML
@@ -64,7 +69,7 @@ public class GuiController implements Initializable {
 
     private MediaPlayer bgmPlayer;
 
-    private Text pauseText;
+    public Text pauseText;
 
     private Rectangle[][] displayMatrix;
 
@@ -312,6 +317,45 @@ public class GuiController implements Initializable {
             System.out.println("加载 BGM 失败：" + e.getMessage());
         }
     }
+
+    public void refreshNext(int[][] nextShape) {
+
+        nextPanel.getChildren().clear(); // 清空旧内容
+
+        int rows = nextShape.length;
+        int cols = nextShape[0].length;
+
+        nextPanel.setMinSize(GridPane.USE_PREF_SIZE, GridPane.USE_PREF_SIZE);
+
+        double blockSize = 20;  // 你的 BRICK_SIZE
+
+        // 动态控制 next 画布大小（让大形状不会溢出）
+        nextPanel.setPrefWidth(cols * (blockSize + nextPanel.getHgap()));
+        nextPanel.setPrefHeight(rows * (blockSize + nextPanel.getVgap()));
+
+        // 让 GridPane 在 StackPane 中自动居中
+        StackPane.setAlignment(nextPanel, javafx.geometry.Pos.CENTER);
+
+        // 画 next 方块
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+
+                Rectangle rect = new Rectangle(blockSize, blockSize);
+                rect.setArcWidth(8);
+                rect.setArcHeight(8);
+
+                if (nextShape[i][j] != 0) {
+                    rect.setFill(getFillColor(nextShape[i][j]));
+                } else {
+                    rect.setFill(Color.TRANSPARENT);
+                }
+
+                nextPanel.add(rect, j, i);
+            }
+        }
+    }
+
+
 
 }
 

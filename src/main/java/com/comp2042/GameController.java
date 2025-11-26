@@ -17,6 +17,8 @@ public class GameController implements InputEventListener {
         viewGuiController.setEventListener(this);
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
         viewGuiController.bindScore(board.getScore().scoreProperty());
+        // ⭐ 加上 next 初始化
+        viewGuiController.refreshNext(board.getNextShape());
     }
 
     @Override
@@ -62,6 +64,8 @@ public class GameController implements InputEventListener {
             // 3. 生成下一块砖
             if (board.createNewBrick()) {
                 viewGuiController.gameOver();
+            }else {
+                viewGuiController.refreshNext(board.getNextShape());
             }
 
             // 4. 刷新背景
@@ -102,6 +106,8 @@ public class GameController implements InputEventListener {
     public void createNewGame() {
         board.newGame();
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
+        // ⭐ next 更新
+        viewGuiController.refreshNext(board.getNextShape());
     }
 
     @Override
@@ -145,7 +151,8 @@ public class GameController implements InputEventListener {
             viewGuiController.gameOver();
             return;
         }
-
+        // ⭐ next 更新
+        viewGuiController.refreshNext(board.getNextShape());
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
         viewGuiController.refreshBrick(board.getViewData());
     }

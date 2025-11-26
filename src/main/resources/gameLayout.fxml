@@ -47,9 +47,31 @@
            style="-fx-font-size:24px; -fx-text-fill:white;"/>
     <Label fx:id="comboLabel"
 
-           layoutX="500"
+           layoutX="250"
            layoutY="90"
            style="-fx-font-size: 22px; -fx-text-fill: yellow; -fx-font-weight:bold;"/>
+    <VBox layoutX="250" layoutY="140" spacing="10">
+
+        <Label text="Next"
+               style="-fx-text-fill: white; -fx-font-size: 22px; -fx-font-weight: bold;" />
+
+        <StackPane fx:id="nextContainer"
+                   style="-fx-background-color: rgba(255,255,255,0.05);
+                      -fx-border-color: #FFFFFF88;
+                      -fx-border-width: 2;
+                      -fx-border-radius: 8;
+                      -fx-background-radius: 8;"
+                   prefWidth="120" prefHeight="120">
+
+            <!-- nextPanel 放在 StackPane 中居中显示 -->
+            <GridPane fx:id="nextPanel"
+                      hgap="2" vgap="2"
+                      alignment="CENTER"/>
+        </StackPane>
+
+    </VBox>
+
+
 
 
 
