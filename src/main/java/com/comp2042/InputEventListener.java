@@ -14,4 +14,8 @@ public interface InputEventListener {
 
 
     void createNewGame();
+
+    void onHold();
+
+
 }

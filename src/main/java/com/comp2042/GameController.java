@@ -156,6 +156,15 @@ public class GameController implements InputEventListener {
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
         viewGuiController.refreshBrick(board.getViewData());
     }
+    //hold 存储功能
+    @Override
+    public void onHold() {
+        board.holdBrick();
+
+        // 落地前交换不刷新背景，只刷新当前砖
+        viewGuiController.refreshBrick(board.getViewData());
+        viewGuiController.refreshHold(board.getHoldShape());
+    }
 
 
 

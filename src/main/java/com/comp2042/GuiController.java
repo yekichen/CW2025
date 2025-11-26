@@ -55,6 +55,12 @@ public class GuiController implements Initializable {
     @FXML
     private Label comboLabel;
 
+    //方块hold储存
+    @FXML
+    private GridPane holdPanel;
+    private Rectangle[][] holdRectangles;
+
+
     //下一个方块的预览
     @FXML
     private GridPane nextPanel;
@@ -105,7 +111,19 @@ public class GuiController implements Initializable {
                 }
 
                 // 2️⃣ 暂停 or Game Over → 不接受输入
-                if (isPause.get() || isGameOver.get()) {
+                if (isGameOver.get() && keyEvent.getCode() != KeyCode.N) {
+                    return;
+                }// 允许 Game Over 状态下用 N 重新开始，其它键忽略
+                if (isGameOver.get() && keyEvent.getCode() != KeyCode.N) {
+                    return;
+                }
+                // N 键：重新开始
+                if (keyEvent.getCode() == KeyCode.N) {
+                    newGame(null);
+                }
+
+                // 暂停状态下，除了 P 以外都不处理
+                if (isPause.get()) {
                     return;
                 }
 
@@ -127,13 +145,15 @@ public class GuiController implements Initializable {
                     keyEvent.consume();
                 }
 
-                // N 键：重新开始
-                if (keyEvent.getCode() == KeyCode.N) {
-                    newGame(null);
-                }
                 if (keyEvent.getCode() == KeyCode.SPACE) {
                     eventListener.onHardDrop();
                 }
+
+                if (keyEvent.getCode() == KeyCode.C) {
+                    eventListener.onHold();
+                    return;
+                }
+
 
 
             }
@@ -354,6 +374,32 @@ public class GuiController implements Initializable {
             }
         }
     }
+    //hold储存
+    public void refreshHold(int[][] holdShape) {
+
+        if (holdRectangles == null) {
+            holdRectangles = new Rectangle[holdShape.length][holdShape[0].length];
+            for (int i = 0; i < holdShape.length; i++) {
+                for (int j = 0; j < holdShape[i].length; j++) {
+                    Rectangle r = new Rectangle(20, 20);
+                    r.setFill(Color.TRANSPARENT);
+                    holdRectangles[i][j] = r;
+                    holdPanel.add(r, j, i);
+                }
+            }
+        }
+
+        for (int i = 0; i < holdShape.length; i++) {
+            for (int j = 0; j < holdShape[i].length; j++) {
+                if (holdShape[i][j] != 0) {
+                    holdRectangles[i][j].setFill(Color.YELLOW);
+                } else {
+                    holdRectangles[i][j].setFill(Color.TRANSPARENT);
+                }
+            }
+        }
+    }
+
 
 
 

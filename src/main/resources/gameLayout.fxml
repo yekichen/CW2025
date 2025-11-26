@@ -6,6 +6,10 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
 <?import java.net.URL?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
 <Pane fx:controller="com.comp2042.GuiController"
       xmlns:fx="http://javafx.com/fxml">
 
@@ -50,29 +54,46 @@
            layoutX="250"
            layoutY="90"
            style="-fx-font-size: 22px; -fx-text-fill: yellow; -fx-font-weight:bold;"/>
-    <VBox layoutX="250" layoutY="140" spacing="10">
+    <!-- ========================= -->
+    <!--        RIGHT  PANEL       -->
+    <!-- ========================= -->
 
+    <VBox layoutX="380" layoutY="20" spacing="12">
+
+        <!-- NEXT title -->
         <Label text="Next"
-               style="-fx-text-fill: white; -fx-font-size: 22px; -fx-font-weight: bold;" />
+               style="-fx-text-fill: white; -fx-font-size: 22px;"/>
 
-        <StackPane fx:id="nextContainer"
-                   style="-fx-background-color: rgba(255,255,255,0.05);
-                      -fx-border-color: #FFFFFF88;
-                      -fx-border-width: 2;
-                      -fx-border-radius: 8;
-                      -fx-background-radius: 8;"
-                   prefWidth="120" prefHeight="120">
+        <!-- Next Block Preview -->
+        <StackPane>
+            <Rectangle width="140" height="140"
+                       arcWidth="20" arcHeight="20"
+                       fill="transparent"
+                       stroke="white" strokeWidth="2"/>
 
-            <!-- nextPanel 放在 StackPane 中居中显示 -->
             <GridPane fx:id="nextPanel"
                       hgap="2" vgap="2"
+                      prefWidth="120" prefHeight="120"
+                      alignment="CENTER"/>
+        </StackPane>
+
+        <!-- HOLD title -->
+        <Label text="Hold"
+               style="-fx-text-fill: white; -fx-font-size: 22px;"/>
+
+        <!-- Hold Block Preview -->
+        <StackPane>
+            <Rectangle width="140" height="140"
+                       arcWidth="20" arcHeight="20"
+                       fill="transparent"
+                       stroke="white" strokeWidth="2"/>
+
+            <GridPane fx:id="holdPanel"
+                      hgap="2" vgap="2"
+                      prefWidth="120" prefHeight="120"
                       alignment="CENTER"/>
         </StackPane>
 
     </VBox>
-
-
-
-
 
 </Pane>

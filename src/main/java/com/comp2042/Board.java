@@ -28,4 +28,7 @@ public interface Board {
 
     // ⭐ 新增 Next Block（下一块方块显示）支持方法
     int[][] getNextShape();
+    // ⭐ 新增 Hold 支持
+    void holdBrick();
+    int[][] getHoldShape();
 }
