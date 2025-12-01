@@ -47,7 +47,7 @@
     <Label fx:id="scoreLabel"
            text="Score: 0"
            layoutX="250"
-           layoutY="50"
+           layoutY="15"
            style="-fx-font-size:24px; -fx-text-fill:white;"/>
     <Label fx:id="comboLabel"
 
@@ -58,11 +58,11 @@
     <!--        RIGHT  PANEL       -->
     <!-- ========================= -->
 
-    <VBox layoutX="380" layoutY="20" spacing="12">
+    <VBox layoutX="250" layoutY="50" spacing="10">
 
         <!-- NEXT title -->
         <Label text="Next"
-               style="-fx-text-fill: white; -fx-font-size: 22px;"/>
+               style="-fx-text-fill: white; -fx-font-size: 26px;"/>
 
         <!-- Next Block Preview -->
         <StackPane>

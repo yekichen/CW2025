@@ -1,3 +1,5 @@
+
+
 package com.comp2042;
 
 public class GameController implements InputEventListener {
@@ -78,6 +80,7 @@ public class GameController implements InputEventListener {
                 board.getScore().add(1);
             }
         }
+        viewGuiController.refreshGhost(board.getViewData(), board.getGhostY());
 
         return new DownData(clearRow, board.getViewData());
     }
@@ -86,18 +89,24 @@ public class GameController implements InputEventListener {
     @Override
     public ViewData onLeftEvent(MoveEvent event) {
         board.moveBrickLeft();
+        viewGuiController.refreshGhost(board.getViewData(), board.getGhostY());
+
         return board.getViewData();
     }
 
     @Override
     public ViewData onRightEvent(MoveEvent event) {
         board.moveBrickRight();
+        viewGuiController.refreshGhost(board.getViewData(), board.getGhostY());
+
         return board.getViewData();
     }
 
     @Override
     public ViewData onRotateEvent(MoveEvent event) {
         board.rotateLeftBrick();
+        viewGuiController.refreshGhost(board.getViewData(), board.getGhostY());
+
         return board.getViewData();
     }
 
@@ -108,6 +117,9 @@ public class GameController implements InputEventListener {
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
         // ⭐ next 更新
         viewGuiController.refreshNext(board.getNextShape());
+
+        viewGuiController.refreshGhost(board.getViewData(), board.getGhostY());
+
     }
 
     @Override
@@ -155,6 +167,8 @@ public class GameController implements InputEventListener {
         viewGuiController.refreshNext(board.getNextShape());
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
         viewGuiController.refreshBrick(board.getViewData());
+        viewGuiController.refreshGhost(board.getViewData(), board.getGhostY());
+
     }
     //hold 存储功能
     @Override
@@ -164,6 +178,7 @@ public class GameController implements InputEventListener {
         // 落地前交换不刷新背景，只刷新当前砖
         viewGuiController.refreshBrick(board.getViewData());
         viewGuiController.refreshHold(board.getHoldShape());
+        viewGuiController.refreshGhost(board.getViewData(), board.getGhostY());  // ⭐ ADD THIS LINE
     }
 
 

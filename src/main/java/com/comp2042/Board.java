@@ -31,4 +31,6 @@ public interface Board {
     // ⭐ 新增 Hold 支持
     void holdBrick();
     int[][] getHoldShape();
+    int getGhostY();
+
 }

@@ -67,6 +67,7 @@ public class GuiController implements Initializable {
 
     private Rectangle[][] nextRectangles;
 
+
     // 新增：暂停图层
     @FXML
     private StackPane pauseLayer;
@@ -82,6 +83,8 @@ public class GuiController implements Initializable {
     private InputEventListener eventListener;
 
     private Rectangle[][] rectangles;
+
+    private Rectangle[][] ghostRectangles;
 
     public Timeline timeLine;
 
@@ -198,6 +201,8 @@ public class GuiController implements Initializable {
     }
 
     public void initGameView(int[][] boardMatrix, ViewData brick) {
+
+        // ========== 1. 初始化背景矩阵 ==========
         displayMatrix = new Rectangle[boardMatrix.length][boardMatrix[0].length];
         for (int i = 2; i < boardMatrix.length; i++) {
             for (int j = 0; j < boardMatrix[i].length; j++) {
@@ -208,7 +213,9 @@ public class GuiController implements Initializable {
             }
         }
 
+        // ========== 2. 初始化当前方块矩阵 rectangles ==========
         rectangles = new Rectangle[brick.getBrickData().length][brick.getBrickData()[0].length];
+
         for (int i = 0; i < brick.getBrickData().length; i++) {
             for (int j = 0; j < brick.getBrickData()[i].length; j++) {
                 Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
@@ -218,9 +225,35 @@ public class GuiController implements Initializable {
             }
         }
 
+        ghostRectangles = new Rectangle[4][4]; // Maximum brick size is 4x4
+
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                Rectangle r = new Rectangle(BRICK_SIZE, BRICK_SIZE);
+                r.setFill(Color.LIGHTGRAY);
+                r.setOpacity(0.35);
+                r.setArcHeight(9);
+                r.setArcWidth(9);
+                r.setVisible(false);
+                r.setMouseTransparent(true); // Important: ghost shouldn't block clicks
+                ghostRectangles[i][j] = r;
+            }
+        }
+
+// Add all ghost rectangles to displayMatrix area (same layer as background)
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                // Use a temporary position, will be updated in refreshGhost
+                gamePanel.add(ghostRectangles[i][j], 0, 0);
+            }
+        }
+
+
+        // ========== 4. 设置当前方块的位置 ==========
         brickPanel.setLayoutX(+12.5 + gamePanel.getLayoutX() + brick.getxPosition() * (brickPanel.getVgap() + BRICK_SIZE));
         brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + brick.getyPosition() * (brickPanel.getHgap() + BRICK_SIZE));
 
+        // ========== 5. ⭐ 最后启动 Timeline（不能放前面） ==========
         timeLine = new Timeline(new KeyFrame(
                 Duration.millis(400),
                 ae -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))
@@ -228,6 +261,7 @@ public class GuiController implements Initializable {
         timeLine.setCycleCount(Timeline.INDEFINITE);
         timeLine.play();
     }
+
 
     private Paint getFillColor(int i) {
         return switch (i) {
@@ -400,8 +434,55 @@ public class GuiController implements Initializable {
         }
     }
 
+    public void refreshGhost(ViewData brick, int ghostY) {
+        if (ghostRectangles == null || brick == null) return;
+
+        int[][] shape = brick.getBrickData();
+        int xPos = brick.getxPosition();
+        int currentY = brick.getyPosition();
+
+        // First, hide all ghost rectangles
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                ghostRectangles[i][j].setVisible(false);
+            }
+        }
+
+        // Only show ghost if it's below the current piece
+        if (ghostY <= currentY) {
+            return; // Ghost would overlap with current piece
+        }
+
+        // Now show and position the visible ghost blocks
+        for (int i = 0; i < shape.length; i++) {
+            for (int j = 0; j < shape[i].length; j++) {
+                if (shape[i][j] != 0) { // There's a block here
+
+                    int ghostRow = ghostY + i;
+
+                    // Check if this block is within the visible game area
+                    if (ghostRow >= 2 && ghostRow < 25) {
+
+                        Rectangle r = ghostRectangles[i][j];
+                        r.setVisible(true);
+
+                        // Remove from current position
+                        gamePanel.getChildren().remove(r);
+
+                        // Add at correct position (subtract 2 for hidden rows)
+                        gamePanel.add(r, xPos + j, ghostRow - 2);
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
+
+
 
 
 
 }
-
