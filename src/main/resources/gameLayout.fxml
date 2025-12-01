@@ -44,6 +44,11 @@
     <stylesheets>
         <URL value="@window_style.css"/>
     </stylesheets>
+    <Label fx:id="levelLabel"
+           text="Level: 1"
+           layoutX="300"
+           layoutY="80"
+           style="-fx-text-fill: WHITE; -fx-font-size: 20px;"/>
     <Label fx:id="scoreLabel"
            text="Score: 0"
            layoutX="250"
@@ -95,5 +100,7 @@
         </StackPane>
 
     </VBox>
+
+
 
 </Pane>

@@ -2,6 +2,9 @@
 
 package com.comp2042;
 
+import javafx.animation.KeyFrame;
+import javafx.util.Duration;
+
 public class GameController implements InputEventListener {
 
     private Board board = new SimpleBoard(25, 10);
@@ -53,6 +56,12 @@ public class GameController implements InputEventListener {
 
                 // ⭐ 更新 UI 显示 Combo
                 viewGuiController.updateCombo(combo);
+
+                // ⭐⭐⭐（你要加的 Level 系统）⭐⭐⭐
+                board.getLevelManager().addClearedLines(lines);
+
+                // ⭐⭐⭐（你要加的速度更新）⭐⭐⭐
+                updateTimelineSpeed();
 
             } else {
 
@@ -148,6 +157,11 @@ public class GameController implements InputEventListener {
             // ⭐ 显示 Combo
             viewGuiController.updateCombo(combo);
 
+            // ⭐⭐⭐ 这里补上 Level 逻辑 ⭐⭐⭐
+            board.getLevelManager().addClearedLines(lines);  // 👈 升级
+            updateTimelineSpeed();                           // 👈 更新速度 & LevelLabel
+
+
             // ⭐ 显示 “+分数” 动画（和 soft drop 一样）
             NotificationPanel np = new NotificationPanel("+" + (baseScore + comboBonus));
             viewGuiController.groupNotification.getChildren().add(np);
@@ -180,6 +194,26 @@ public class GameController implements InputEventListener {
         viewGuiController.refreshHold(board.getHoldShape());
         viewGuiController.refreshGhost(board.getViewData(), board.getGhostY());  // ⭐ ADD THIS LINE
     }
+    //timeline
+
+    private void updateTimelineSpeed() {
+        System.out.println("LEVEL NOW = " + board.getLevelManager().getLevel());
+        // 1️⃣ 获取当前速度
+        int speed = board.getLevelManager().getCurrentSpeed();
+
+        // 2️⃣ 更新 Timeline（注意：timeline 在 GuiController）
+        viewGuiController.timeLine.stop();
+        viewGuiController.timeLine.getKeyFrames().set(
+                0,
+                new KeyFrame(Duration.millis(speed),
+                        e -> onDownEvent(new MoveEvent(EventType.DOWN, EventSource.THREAD)))
+        );
+        viewGuiController.timeLine.play();
+
+        // 3️⃣ 更新 Level 显示
+        viewGuiController.updateLevel(board.getLevelManager().getLevel());
+    }
+
 
 
 

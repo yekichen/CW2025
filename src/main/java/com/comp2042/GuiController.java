@@ -67,6 +67,9 @@ public class GuiController implements Initializable {
 
     private Rectangle[][] nextRectangles;
 
+    //加入level up
+    @FXML
+    private Label levelLabel;
 
     // 新增：暂停图层
     @FXML
@@ -224,7 +227,7 @@ public class GuiController implements Initializable {
                 brickPanel.add(rectangle, j, i);
             }
         }
-
+        //========== 3. 初始化当前方块矩阵 ghostRectangles ==========
         ghostRectangles = new Rectangle[4][4]; // Maximum brick size is 4x4
 
         for (int i = 0; i < 4; i++) {
@@ -476,6 +479,19 @@ public class GuiController implements Initializable {
             }
         }
     }
+
+    public void updateLevel(int level) {
+        System.out.println("GUI UPDATE LEVEL = " + level); // ⭐⭐ 加这一行
+
+        if (levelLabel != null) {
+            levelLabel.setText("LEVEL  " + level);
+        } else {
+            System.out.println("LEVEL LABEL IS NULL !!!!!"); // ⭐⭐ 关键测试
+        }
+    }
+
+
+
 
 
 

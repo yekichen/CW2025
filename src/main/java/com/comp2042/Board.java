@@ -1,4 +1,6 @@
 package com.comp2042;
+import com.comp2042.logic.level.LevelManager;
+
 
 public interface Board {
 
@@ -32,5 +34,6 @@ public interface Board {
     void holdBrick();
     int[][] getHoldShape();
     int getGhostY();
-
+    // ⭐⭐⭐ 添加这个方法（你现在缺的）
+    LevelManager getLevelManager();
 }
