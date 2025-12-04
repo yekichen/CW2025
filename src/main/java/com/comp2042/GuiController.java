@@ -33,6 +33,8 @@ public class GuiController implements Initializable {
 
     private static final int BRICK_SIZE = 20;
 
+    @FXML private Label linesLabel;
+
     @FXML private Label scoreLabel;
     @FXML private GridPane gamePanel;
     @FXML public Group groupNotification;
@@ -424,6 +426,12 @@ public class GuiController implements Initializable {
 
     public void onRestartClicked() {
         newGame(null);   // 复用已经写好的重开逻辑
+    }
+
+    public void updateLinesCleared(int totalLines) {
+        if (linesLabel != null) {
+            linesLabel.setText("Cleared: " + totalLines);
+        }
     }
 
 

@@ -13,6 +13,8 @@ public class GameController implements InputEventListener {
     private boolean isPaused = false;
 
     private int combo = 0;
+    private int totalLinesCleared = 0;
+
     // ⭐⭐ 就把这个加在这里 ⭐⭐
     public Board getBoard() {
         return board;
@@ -81,6 +83,10 @@ public class GameController implements InputEventListener {
                 board.getScore().add(base + comboBonus);
                 viewGuiController.updateCombo(combo);
                 viewGuiController.showFloatingScore(base + comboBonus);
+                // ⭐ 统计并更新总消行数（onDownEvent）⭐
+                totalLinesCleared += removedCount;
+                viewGuiController.updateLinesCleared(totalLinesCleared);
+
 
 
                 // Level
@@ -194,6 +200,10 @@ public class GameController implements InputEventListener {
                 board.getScore().add(base + comboBonus);
                 viewGuiController.updateCombo(combo);
                 viewGuiController.showFloatingScore(base + comboBonus);
+                // ⭐ 统计并更新总消行数（onDownEvent）⭐
+                totalLinesCleared += removedCount;
+                viewGuiController.updateLinesCleared(totalLinesCleared);
+
 
                 board.getLevelManager().addClearedLines(removedCount);
                 updateTimelineSpeed();             // ⭐ CRITICAL

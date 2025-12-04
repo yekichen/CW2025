@@ -55,10 +55,15 @@
            layoutY="15"
            style="-fx-font-size:24px; -fx-text-fill:white;"/>
     <Label fx:id="comboLabel"
-
            layoutX="250"
            layoutY="90"
            style="-fx-font-size: 22px; -fx-text-fill: yellow; -fx-font-weight:bold;"/>
+    <Label fx:id="linesLabel"
+           text="Cleared: 0"
+           layoutX="250"
+           layoutY="130"
+           style="-fx-font-size: 20px; -fx-text-fill: cyan; -fx-font-weight: bold;"/>
+
     <!-- ========================= -->
     <!--        RIGHT  PANEL       -->
     <!-- ========================= -->
