@@ -3,13 +3,15 @@ package com.comp2042;
 public final class ClearRow {
 
     private final int linesRemoved;
+    private final int[] rows;
     private final int[][] newMatrix;
     private final int scoreBonus;
 
-    public ClearRow(int linesRemoved, int[][] newMatrix, int scoreBonus) {
+    public ClearRow(int linesRemoved, int[][] newMatrix, int scoreBonus,int[] rows) {
         this.linesRemoved = linesRemoved;
         this.newMatrix = newMatrix;
         this.scoreBonus = scoreBonus;
+        this.rows = rows;
     }
 
     public int getLinesRemoved() {
@@ -22,5 +24,8 @@ public final class ClearRow {
 
     public int getScoreBonus() {
         return scoreBonus;
+    }
+    public int[] getRows() {
+        return rows;
     }
 }

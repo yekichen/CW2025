@@ -86,25 +86,31 @@ public class MatrixOperations {
 
 
     public static ClearRow checkRemoving(final int[][] matrix) {
+
         int[][] tmp = new int[matrix.length][matrix[0].length];
         Deque<int[]> newRows = new ArrayDeque<>();
         List<Integer> clearedRows = new ArrayList<>();
 
         for (int i = 0; i < matrix.length; i++) {
+
             int[] tmpRow = new int[matrix[i].length];
             boolean rowToClear = true;
+
             for (int j = 0; j < matrix[0].length; j++) {
                 if (matrix[i][j] == 0) {
                     rowToClear = false;
                 }
                 tmpRow[j] = matrix[i][j];
             }
+
             if (rowToClear) {
-                clearedRows.add(i);
+                clearedRows.add(i);      // ⭐ 记录被清除的行
             } else {
                 newRows.add(tmpRow);
             }
         }
+
+        // ⭐ 下移剩余行
         for (int i = matrix.length - 1; i >= 0; i--) {
             int[] row = newRows.pollLast();
             if (row != null) {
@@ -113,12 +119,36 @@ public class MatrixOperations {
                 break;
             }
         }
-        int scoreBonus = 50 * clearedRows.size() * clearedRows.size();
-        return new ClearRow(clearedRows.size(), tmp, scoreBonus);
+
+        int removedCount = clearedRows.size();
+        int scoreBonus = 50 * removedCount * removedCount;
+
+        // ⭐ 将 List<Integer> 转为 int[]
+        int[] rowsArray = clearedRows.stream().mapToInt(Integer::intValue).toArray();
+
+        // ⭐ 使用新的构造函数（含 rows）
+        return new ClearRow(removedCount, tmp, scoreBonus, rowsArray);
     }
+
 
     public static List<int[][]> deepCopyList(List<int[][]> list){
         return list.stream().map(MatrixOperations::copy).collect(Collectors.toList());
     }
+
+    public static int[] detectFullRows(final int[][] matrix) {
+        List<Integer> rows = new ArrayList<>();
+        for (int i = 0; i < matrix.length; i++) {
+            boolean full = true;
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] == 0) {
+                    full = false;
+                    break;
+                }
+            }
+            if (full) rows.add(i);
+        }
+        return rows.stream().mapToInt(i -> i).toArray();
+    }
+
 
 }

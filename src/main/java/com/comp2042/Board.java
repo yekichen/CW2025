@@ -16,6 +16,8 @@ public interface Board {
 
     int[][] getBoardMatrix();
 
+    void setBoardMatrix(int[][] matrix);
+
     ViewData    getViewData();
 
     void mergeBrickToBackground();
@@ -36,4 +38,6 @@ public interface Board {
     int getGhostY();
     // ⭐⭐⭐ 添加这个方法（你现在缺的）
     LevelManager getLevelManager();
+
+
 }
