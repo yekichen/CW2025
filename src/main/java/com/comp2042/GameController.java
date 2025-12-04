@@ -80,6 +80,8 @@ public class GameController implements InputEventListener {
                 int comboBonus = combo * combo * 50;
                 board.getScore().add(base + comboBonus);
                 viewGuiController.updateCombo(combo);
+                viewGuiController.showFloatingScore(base + comboBonus);
+
 
                 // Level
                 board.getLevelManager().addClearedLines(removedCount);
@@ -191,6 +193,7 @@ public class GameController implements InputEventListener {
                 int comboBonus = combo * combo * 50;
                 board.getScore().add(base + comboBonus);
                 viewGuiController.updateCombo(combo);
+                viewGuiController.showFloatingScore(base + comboBonus);
 
                 board.getLevelManager().addClearedLines(removedCount);
                 updateTimelineSpeed();             // ⭐ CRITICAL

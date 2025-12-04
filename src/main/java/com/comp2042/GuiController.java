@@ -201,6 +201,11 @@ public class GuiController implements Initializable {
         );
         timeLine.setCycleCount(Timeline.INDEFINITE);
         timeLine.play();
+
+        gameOverPanel.getRestartButton().setOnAction(e -> {
+            onRestartClicked();
+        });
+
     }
 
     private Paint getFillColor(int i) {
@@ -410,4 +415,16 @@ public class GuiController implements Initializable {
             }
         }
     }
+
+    public void showFloatingScore(int score) {
+        NotificationPanel p = new NotificationPanel("+" + score);
+        groupNotification.getChildren().add(p);
+        p.showScore(groupNotification.getChildren());
+    }
+
+    public void onRestartClicked() {
+        newGame(null);   // 复用已经写好的重开逻辑
+    }
+
+
 }
