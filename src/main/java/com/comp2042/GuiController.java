@@ -1,5 +1,7 @@
 package com.comp2042;
 
+import javafx.scene.effect.GaussianBlur;
+import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.util.Duration;
 import javafx.scene.control.Button;
@@ -70,8 +72,10 @@ public class GuiController implements Initializable {
     private Rectangle[][] rectangles;
     private Rectangle[][] ghostRectangles;
 
+    private FadeTransition startBlink;
     public Timeline timeLine;
 
+    private GaussianBlur pauseBlur = new GaussianBlur(0);
     private final BooleanProperty isPause = new SimpleBooleanProperty(false);
     private final BooleanProperty isGameOver = new SimpleBooleanProperty(false);
 
@@ -89,6 +93,8 @@ public class GuiController implements Initializable {
         levelLabel.setText("Level: 1");
         linesLabel.setText("Cleared: 0");
 
+        gamePanel.setEffect(pauseBlur);
+        brickPanel.setEffect(pauseBlur);
         gamePanel.setFocusTraversable(true);
         gamePanel.requestFocus();
         gamePanel.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -159,6 +165,14 @@ public class GuiController implements Initializable {
         ft.setCycleCount(1);
         ft.play();
 
+        // ⭐ 循环闪烁的 Press Start 动画
+        FadeTransition blink = new FadeTransition(Duration.seconds(1.2), pressStartText);
+        blink.setFromValue(0.2);
+        blink.setToValue(1.0);
+        blink.setCycleCount(Animation.INDEFINITE);
+        blink.setAutoReverse(true);
+        blink.play();
+
     }
 
     private void togglePause() {
@@ -168,7 +182,8 @@ public class GuiController implements Initializable {
         isPause.set(nowPaused);
 
         if (nowPaused) {
-            // ⭐ 暂停 → PAUSED 文本淡入
+
+            // ⭐ 暂停：PAUSED 淡入
             if (pauseText != null) {
                 pauseText.setOpacity(0);
                 pauseText.setVisible(true);
@@ -179,11 +194,19 @@ public class GuiController implements Initializable {
                 fadeIn.play();
             }
 
+            // ⭐ 模糊背景淡入（0 → 20）
+            Timeline blurIn = new Timeline(
+                    new KeyFrame(Duration.ZERO, e -> pauseBlur.setRadius(0)),
+                    new KeyFrame(Duration.seconds(0.4), e -> pauseBlur.setRadius(20))
+            );
+            blurIn.play();
+
             timeLine.pause();
             if (bgmPlayer != null) bgmPlayer.pause();
 
         } else {
-            // ⭐ 继续 → PAUSED 文本淡出
+
+            // ⭐ 恢复游戏：PAUSED 淡出
             if (pauseText != null) {
                 FadeTransition fadeOut = new FadeTransition(Duration.seconds(0.4), pauseText);
                 fadeOut.setFromValue(1);
@@ -192,10 +215,18 @@ public class GuiController implements Initializable {
                 fadeOut.play();
             }
 
+            // ⭐ 模糊背景淡出（20 → 0）
+            Timeline blurOut = new Timeline(
+                    new KeyFrame(Duration.ZERO, e -> pauseBlur.setRadius(20)),
+                    new KeyFrame(Duration.seconds(0.4), e -> pauseBlur.setRadius(0))
+            );
+            blurOut.play();
+
             timeLine.play();
             if (bgmPlayer != null) bgmPlayer.play();
         }
     }
+
 
 
     public void initGameView(int[][] boardMatrix, ViewData brick) {
@@ -243,6 +274,15 @@ public class GuiController implements Initializable {
                 brick.getxPosition() * (brickPanel.getVgap() + BRICK_SIZE));
         brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() +
                 brick.getyPosition() * (brickPanel.getHgap() + BRICK_SIZE));
+        /*brickPanel.setLayoutX(
+                gamePanel.getLayoutX() +
+                        brick.getxPosition() * (BRICK_SIZE + brickPanel.getHgap())
+        );
+        brickPanel.setLayoutY(
+                gamePanel.getLayoutY() +
+                        (brick.getyPosition() - 2) * (BRICK_SIZE + brickPanel.getVgap())
+        );*/
+
 
         // ⭐⭐⭐ 5. 修复：初始速度 = LevelManager.getCurrentSpeed()
         GameController gc = (GameController) eventListener;  // 强转
@@ -338,13 +378,33 @@ public class GuiController implements Initializable {
 
     public void gameOver() {
         timeLine.stop();
-        gameOverPanel.setVisible(true);
         isGameOver.set(true);
         isPause.set(false);
-        if (pauseLayer != null) pauseLayer.setVisible(false);
+
+        // ⭐ 让 PAUSED 文本消失
+        if (pauseText != null) pauseText.setVisible(false);
+
+        // ⭐ 背景暗化
+        gamePanel.setOpacity(0.4);
+        brickPanel.setOpacity(0.4);
+
+        // ⭐ Game Over 面板淡入
+        gameOverPanel.setOpacity(0);
+        gameOverPanel.setVisible(true);
+
+        FadeTransition fadeIn = new FadeTransition(Duration.seconds(0.8), gameOverPanel);
+        fadeIn.setFromValue(0);
+        fadeIn.setToValue(1);
+        fadeIn.play();
+
+        if (bgmPlayer != null) bgmPlayer.pause();
     }
 
+
     public void newGame(ActionEvent actionEvent) {
+        gamePanel.setOpacity(1);
+        brickPanel.setOpacity(1);
+
         timeLine.stop();
         gameOverPanel.setVisible(false);
         eventListener.createNewGame();
@@ -485,21 +545,26 @@ public class GuiController implements Initializable {
     }
     public void onStartClicked() {
 
-        // 1️⃣ 游戏已经开始，但处于暂停 → 解除暂停
+        // 1️⃣ 游戏已经开始且暂停 → 调用 togglePause() 恢复游戏（含淡出动画）
         if (gameStarted && isPause.get()) {
-            togglePause();   // <-- 就是这一行让 Start 也有淡出动画
+            togglePause();
             return;
         }
 
-        // 2️⃣ 游戏已经开始且没暂停 → 什么都不做
+        // 2️⃣ 游戏已经开始 → 不重复开始
         if (gameStarted) return;
 
-        // 3️⃣ 游戏第一次开始
+        // 3️⃣ 第一次开始游戏
         gameStarted = true;
         isGameOver.set(false);
         isPause.set(false);
 
-        // ⭐ 按下 start 后淡出 Press Start
+        // ⭐ 停止闪烁动画
+        if (startBlink != null) {
+            startBlink.stop();
+        }
+
+        // ⭐ 淡出动画（代替直接 setVisible(false)）
         if (pressStartText != null) {
             FadeTransition hide = new FadeTransition(Duration.seconds(0.8), pressStartText);
             hide.setFromValue(1);
@@ -511,6 +576,7 @@ public class GuiController implements Initializable {
         timeLine.play();
         gamePanel.requestFocus();
     }
+
 
 
 
