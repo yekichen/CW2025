@@ -1,5 +1,7 @@
 package com.comp2042;
 
+import javafx.animation.FadeTransition;
+import javafx.util.Duration;
 import javafx.scene.control.Button;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -83,6 +85,9 @@ public class GuiController implements Initializable {
         btnPause.setOnAction(e -> onPauseClicked());
         btnRestart.setOnAction(e -> onRestartClicked());
         btnQuit.setOnAction(e -> onQuitClicked());
+        // ⭐⭐ 加入这两行，确保 UI 初始就有数字 ⭐⭐
+        levelLabel.setText("Level: 1");
+        linesLabel.setText("Cleared: 0");
 
         gamePanel.setFocusTraversable(true);
         gamePanel.requestFocus();
@@ -145,6 +150,15 @@ public class GuiController implements Initializable {
         reflection.setTopOffset(-12);
 
         initBGM();
+        //加入开始字样的淡出动画
+        pressStartText.setOpacity(0);
+
+        FadeTransition ft = new FadeTransition(Duration.seconds(1.8), pressStartText);
+        ft.setFromValue(0);
+        ft.setToValue(1);
+        ft.setCycleCount(1);
+        ft.play();
+
     }
 
     private void togglePause() {
@@ -154,15 +168,35 @@ public class GuiController implements Initializable {
         isPause.set(nowPaused);
 
         if (nowPaused) {
+            // ⭐ 暂停 → PAUSED 文本淡入
+            if (pauseText != null) {
+                pauseText.setOpacity(0);
+                pauseText.setVisible(true);
+
+                FadeTransition fadeIn = new FadeTransition(Duration.seconds(0.4), pauseText);
+                fadeIn.setFromValue(0);
+                fadeIn.setToValue(1);
+                fadeIn.play();
+            }
+
             timeLine.pause();
-            if (pauseText != null) pauseText.setVisible(true);
             if (bgmPlayer != null) bgmPlayer.pause();
+
         } else {
+            // ⭐ 继续 → PAUSED 文本淡出
+            if (pauseText != null) {
+                FadeTransition fadeOut = new FadeTransition(Duration.seconds(0.4), pauseText);
+                fadeOut.setFromValue(1);
+                fadeOut.setToValue(0);
+                fadeOut.setOnFinished(e -> pauseText.setVisible(false));
+                fadeOut.play();
+            }
+
             timeLine.play();
-            if (pauseText != null) pauseText.setVisible(false);
             if (bgmPlayer != null) bgmPlayer.play();
         }
     }
+
 
     public void initGameView(int[][] boardMatrix, ViewData brick) {
 
@@ -451,18 +485,34 @@ public class GuiController implements Initializable {
     }
     public void onStartClicked() {
 
+        // 1️⃣ 游戏已经开始，但处于暂停 → 解除暂停
+        if (gameStarted && isPause.get()) {
+            togglePause();   // <-- 就是这一行让 Start 也有淡出动画
+            return;
+        }
+
+        // 2️⃣ 游戏已经开始且没暂停 → 什么都不做
         if (gameStarted) return;
 
+        // 3️⃣ 游戏第一次开始
         gameStarted = true;
         isGameOver.set(false);
         isPause.set(false);
 
-        // ⭐ 按下 start 后隐藏文字
-        if (pressStartText != null) pressStartText.setVisible(false);
+        // ⭐ 按下 start 后淡出 Press Start
+        if (pressStartText != null) {
+            FadeTransition hide = new FadeTransition(Duration.seconds(0.8), pressStartText);
+            hide.setFromValue(1);
+            hide.setToValue(0);
+            hide.setOnFinished(e -> pressStartText.setVisible(false));
+            hide.play();
+        }
 
         timeLine.play();
         gamePanel.requestFocus();
     }
+
+
 
 
     public void onPauseClicked() {
