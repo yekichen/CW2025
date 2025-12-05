@@ -1,5 +1,6 @@
 package com.comp2042;
 
+import javafx.scene.control.Button;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.BooleanProperty;
@@ -32,6 +33,15 @@ import java.util.ResourceBundle;
 public class GuiController implements Initializable {
 
     private static final int BRICK_SIZE = 20;
+    // press to start
+    @FXML private Text pressStartText;
+    private boolean gameStarted = false;
+
+
+    @FXML private Button btnStart;
+    @FXML private Button btnPause;
+    @FXML private Button btnRestart;
+    @FXML private Button btnQuit;
 
     @FXML private Label linesLabel;
 
@@ -66,13 +76,20 @@ public class GuiController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+        pressStartText.setVisible(true);
+
         Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
+        btnStart.setOnAction(e -> onStartClicked());
+        btnPause.setOnAction(e -> onPauseClicked());
+        btnRestart.setOnAction(e -> onRestartClicked());
+        btnQuit.setOnAction(e -> onQuitClicked());
 
         gamePanel.setFocusTraversable(true);
         gamePanel.requestFocus();
         gamePanel.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
+                if (!gameStarted) return; // 按键无效
 
                 if (keyEvent.getCode() == KeyCode.P) {
                     togglePause();
@@ -202,7 +219,7 @@ public class GuiController implements Initializable {
                         e -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD)))
         );
         timeLine.setCycleCount(Timeline.INDEFINITE);
-        timeLine.play();
+        timeLine.pause();
 
         gameOverPanel.getRestartButton().setOnAction(e -> {
             onRestartClicked();
@@ -254,6 +271,7 @@ public class GuiController implements Initializable {
     }
 
     private void moveDown(MoveEvent event) {
+        if (!gameStarted) return;
         if (isPause.get()) return;
 
         DownData downData = eventListener.onDownEvent(event);
@@ -424,14 +442,42 @@ public class GuiController implements Initializable {
         p.showScore(groupNotification.getChildren());
     }
 
-    public void onRestartClicked() {
-        newGame(null);   // 复用已经写好的重开逻辑
-    }
+
 
     public void updateLinesCleared(int totalLines) {
         if (linesLabel != null) {
             linesLabel.setText("Cleared: " + totalLines);
         }
+    }
+    public void onStartClicked() {
+
+        if (gameStarted) return;
+
+        gameStarted = true;
+        isGameOver.set(false);
+        isPause.set(false);
+
+        // ⭐ 按下 start 后隐藏文字
+        if (pressStartText != null) pressStartText.setVisible(false);
+
+        timeLine.play();
+        gamePanel.requestFocus();
+    }
+
+
+    public void onPauseClicked() {
+        togglePause();
+    }
+
+    public void onRestartClicked() {
+        gameStarted = true;
+        if (pressStartText != null) pressStartText.setVisible(false);
+        newGame(null);
+    }
+
+
+    public void onQuitClicked() {
+        System.exit(0);
     }
 
 

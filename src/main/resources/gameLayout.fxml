@@ -27,6 +27,10 @@
                       visible="false"
                       style="-fx-font-size: 48px; -fx-fill: white; -fx-font-weight: bold;"
                       opacity="0.85"/>
+                <Text fx:id="pressStartText"
+                      text="PRESS START TO BEGIN"
+                      style="-fx-font-size: 40px; -fx-fill: white; -fx-font-weight: bold;"
+                      opacity="0.85"/>
 
             </StackPane>
 
@@ -103,6 +107,29 @@
                       prefWidth="120" prefHeight="120"
                       alignment="CENTER"/>
         </StackPane>
+        <!-- Control Buttons -->
+        <Label text="Controls"
+               style="-fx-text-fill: white; -fx-font-size: 22px;"/>
+
+        <Button fx:id="btnStart"
+                text="Start"
+                style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-background-color: #4CAF50; -fx-text-fill: white;"
+                prefWidth="140"/>
+
+        <Button fx:id="btnPause"
+                text="Pause"
+                style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-background-color: #2196F3; -fx-text-fill: white;"
+                prefWidth="140"/>
+
+        <Button fx:id="btnRestart"
+                text="Restart"
+                style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-background-color: #FFC107; -fx-text-fill: black;"
+                prefWidth="140"/>
+
+        <Button fx:id="btnQuit"
+                text="Quit"
+                style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-background-color: #F44336; -fx-text-fill: white;"
+                prefWidth="140"/>
 
     </VBox>
 
