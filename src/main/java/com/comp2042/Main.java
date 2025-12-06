@@ -21,11 +21,21 @@ public class Main extends Application {
         GuiController c = fxmlLoader.getController();
 
         primaryStage.setTitle("TetrisJFX");
+
         Scene scene = new Scene(root, 300, 510);
         primaryStage.setScene(scene);
+
+        // ⭐⭐⭐ 在这里加！固定窗口大小！
+        primaryStage.setWidth(500);
+        primaryStage.setHeight(620);
+        primaryStage.setResizable(false);
+
+
         primaryStage.show();
+
         new GameController(c);
     }
+
 
 
     public static void main(String[] args) {

@@ -15,8 +15,21 @@
 
     <GridPane fx:id="brickPanel" vgap="1" hgap="1"/>
 
-    <BorderPane styleClass="gameBoard" fx:id="gameBoard">
-        <center>
+    <!-- 当前的 gameBoard 可以添加渐变背景 -->
+    <BorderPane fx:id="gameBoard"
+                style="
+                -fx-background-color: rgba(20,20,20,0.55);
+                -fx-background-radius: 0;   /* ⭐ 直角背景 */
+                -fx-border-radius: 0;       /* ⭐ 直角边框 */
+                -fx-border-color: #5ac6ff;
+                -fx-border-width: 10;
+
+                -fx-effect: dropshadow(gaussian, rgba(0,255,255,0.45), 25, 0.6, 0, 0);
+            ">
+
+
+
+    <center>
             <!-- 用 StackPane 层叠 gamePanel 和 PAUSED -->
             <StackPane>
 
@@ -30,7 +43,9 @@
                 <Text fx:id="pressStartText"
                       text="PRESS START TO BEGIN"
                       style="-fx-font-size: 40px; -fx-fill: white; -fx-font-weight: bold;"
-                      opacity="0.85"/>
+                      opacity="0.85"
+                      wrappingWidth="200"/>  <!-- ⭐ 限制最大宽度，不会撑大 gameBoard -->
+
 
             </StackPane>
 
@@ -53,95 +68,135 @@
     <!--        RIGHT  PANEL       -->
     <!-- ========================= -->
 
-    <StackPane fx:id="rightPanel"
-               layoutX="520"
-               layoutY="40"
-               prefWidth="260"
-               prefHeight="600"
-               style="
-               -fx-background-color: rgba(20, 20, 20, 0.55);
-               -fx-background-radius: 18;
-               -fx-border-radius: 18;
-               -fx-border-color: #5ac6ff;
-               -fx-border-width: 3;
-               -fx-effect: dropshadow(gaussian, rgba(0,255,255,0.45), 25, 0.6, 0, 0);
-           ">
+    <BorderPane fx:id="rightPanel"
+                layoutX="240"
+                layoutY="0"
+                prefWidth="250" maxWidth="250" minWidth="250"
+                prefHeight="500" maxHeight="500" minHeight="500"
+                style="
+                -fx-background-color: transparent;
+                -fx-background-radius: 18;
+                -fx-border-radius: 18;
+                -fx-border-color: #5ac6ff;
+                -fx-border-width: 0;
+                -fx-effect: transport;
+            ">
 
-        <VBox spacing="16" alignment="TOP_CENTER">
+        <center>
+            <VBox spacing="18" alignment="TOP_CENTER"
+                  style="-fx-padding: 50 16 20 16;">
 
-            <!-- Score / Level / Cleared / Combo -->
-            <Label fx:id="scoreLabel"
-                   style="-fx-font-size: 24px; -fx-text-fill:white;"/>
-            <Label fx:id="levelLabel"
-                   style="-fx-font-size: 20px; -fx-text-fill:white;"/>
-            <Label fx:id="linesLabel"
-                   style="-fx-font-size: 20px; -fx-text-fill: cyan; -fx-font-weight:bold;"/>
-            <Label fx:id="comboLabel"
-                   style="-fx-font-size: 22px; -fx-text-fill: yellow; -fx-font-weight:bold;"/>
-
-            <!-- NEXT title -->
-            <Label text="Next"
-                   style="-fx-text-fill: white; -fx-font-size: 26px;"/>
-
-            <!-- Next Block Preview -->
-            <StackPane>
-                <Rectangle width="140" height="140"
-                           arcWidth="20" arcHeight="20"
-                           fill="transparent"
-                           stroke="white" strokeWidth="2"/>
-
-                <GridPane fx:id="nextPanel"
-                          hgap="2" vgap="2"
-                          prefWidth="120" prefHeight="120"
-                          alignment="CENTER"/>
-            </StackPane>
-
-            <!-- HOLD title -->
-            <Label text="Hold"
-                   style="-fx-text-fill: white; -fx-font-size: 22px;"/>
-
-            <!-- Hold Block Preview -->
-            <StackPane>
-                <Rectangle width="140" height="140"
-                           arcWidth="20" arcHeight="20"
-                           fill="transparent"
-                           stroke="white" strokeWidth="2"/>
-
-                <GridPane fx:id="holdPanel"
-                          hgap="2" vgap="2"
-                          prefWidth="120" prefHeight="120"
-                          alignment="CENTER"/>
-            </StackPane>
-
-            <!-- Control Buttons -->
-            <Label text="Controls"
-                   style="-fx-text-fill: white; -fx-font-size: 22px;"/>
-
-            <Button fx:id="btnStart"
-                    text="Start"
-                    prefWidth="140"
-                    style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-background-color: #4CAF50; -fx-text-fill:white;"/>
-
-            <Button fx:id="btnPause"
-                    text="Pause"
-                    prefWidth="140"
-                    style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-background-color: #2196F3; -fx-text-fill:white;"/>
-
-            <Button fx:id="btnRestart"
-                    text="Restart"
-                    prefWidth="140"
-                    style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-background-color: #FFC107; -fx-text-fill:black;"/>
-
-            <Button fx:id="btnQuit"
-                    text="Quit"
-                    prefWidth="140"
-                    style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-background-color: #F44336; -fx-text-fill:white;"/>
-
-        </VBox>
-
-    </StackPane>
+                <!-- ======== GAME TITLE ======== -->
+                <Label text="TETRIS FX"
+                       style="
+                   -fx-font-size: 32px;
+                   -fx-font-weight: bold;
+                   -fx-text-fill: linear-gradient(to right, #00eaff, #00ff99);
+                   -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 8, 0.3, 0, 0);
+                   -fx-padding: 0 0 10 0;
+               "
+                       alignment="CENTER"/>
 
 
+
+                <!-- ============================== -->
+                <!-- SCORE + COMBO | LEVEL + LINES -->
+                <!-- ============================== -->
+                <GridPane hgap="20" vgap="10" alignment="CENTER">
+
+                    <!-- Row 0 -->
+                    <Label text="Score:" GridPane.rowIndex="0" GridPane.columnIndex="0"
+                           style="-fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    <Label fx:id="scoreLabel" GridPane.rowIndex="0" GridPane.columnIndex="1"
+                           style="-fx-text-fill: white; -fx-font-size: 16px;"/>
+
+                    <!-- Row 1 -->
+                    <Label text="Combo:" GridPane.rowIndex="1" GridPane.columnIndex="0"
+                           style="-fx-text-fill: yellow; -fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    <Label fx:id="comboLabel" GridPane.rowIndex="1" GridPane.columnIndex="1"
+                           style="-fx-text-fill: yellow; -fx-font-size: 16px;"/>
+
+                    <!-- Row 2 -->
+                    <Label text="Level:" GridPane.rowIndex="2" GridPane.columnIndex="0"
+                           style="-fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    <Label fx:id="levelLabel" GridPane.rowIndex="2" GridPane.columnIndex="1"
+                           style="-fx-text-fill: white; -fx-font-size: 16px;"/>
+
+                    <!-- Row 3 -->
+                    <Label text="Cleared:" GridPane.rowIndex="3" GridPane.columnIndex="0"
+                           style="-fx-text-fill: #00d4ff; -fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    <Label fx:id="linesLabel" GridPane.rowIndex="3" GridPane.columnIndex="1"
+                           style="-fx-text-fill: #00d4ff; -fx-font-size: 16px;"/>
+                </GridPane>
+
+
+                <!-- ============= -->
+                <!-- NEXT + HOLD  -->
+                <!-- ============= -->
+                <HBox spacing="30" alignment="CENTER">
+
+                    <!-- NEXT BOX -->
+                    <VBox alignment="CENTER" spacing="6">
+                        <Label text="Next"
+                               style="-fx-font-size: 15px; -fx-text-fill:white;"/>
+                        <StackPane>
+                            <Rectangle width="85" height="85"
+                                       arcWidth="12" arcHeight="12"
+                                       fill="transparent"
+                                       stroke="#ffffff" strokeWidth="1.5"/>
+                            <GridPane fx:id="nextPanel"
+                                      hgap="1" vgap="1"
+                                      prefWidth="60" prefHeight="60"
+                                      alignment="CENTER"/>
+                        </StackPane>
+                    </VBox>
+
+                    <!-- HOLD BOX -->
+                    <VBox alignment="CENTER" spacing="6">
+                        <Label text="Hold"
+                               style="-fx-font-size: 15px; -fx-text-fill:white;"/>
+                        <StackPane>
+                            <Rectangle width="85" height="85"
+                                       arcWidth="12" arcHeight="12"
+                                       fill="transparent"
+                                       stroke="#ffffff" strokeWidth="1.5"/>
+                            <GridPane fx:id="holdPanel"
+                                      hgap="1" vgap="1"
+                                      prefWidth="60" prefHeight="60"
+                                      alignment="CENTER"/>
+                        </StackPane>
+                    </VBox>
+
+                </HBox>
+
+
+
+                <!-- ============= -->
+                <!-- CONTROLS     -->
+                <!-- ============= -->
+                <Label text="Controls"
+                       style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+                <Button fx:id="btnStart" text="Start"
+                        prefWidth="180"
+                        style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color:#4CAF50; -fx-text-fill:white;"/>
+
+                <Button fx:id="btnPause" text="Pause"
+                        prefWidth="180"
+                        style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color:#2196F3; -fx-text-fill:white;"/>
+
+                <Button fx:id="btnRestart" text="Restart"
+                        prefWidth="180"
+                        style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color:#FFC107; -fx-text-fill:black;"/>
+
+                <Button fx:id="btnQuit" text="Quit"
+                        prefWidth="180"
+                        style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color:#F44336; -fx-text-fill:white;"/>
+
+            </VBox>
+        </center>
+
+    </BorderPane>
 
 
 </Pane>

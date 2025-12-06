@@ -90,8 +90,8 @@ public class GuiController implements Initializable {
         btnRestart.setOnAction(e -> onRestartClicked());
         btnQuit.setOnAction(e -> onQuitClicked());
         // ⭐⭐ 加入这两行，确保 UI 初始就有数字 ⭐⭐
-        levelLabel.setText("Level: 1");
-        linesLabel.setText("Cleared: 0");
+        levelLabel.setText("1");
+        linesLabel.setText("0");
 
         gamePanel.setEffect(pauseBlur);
         brickPanel.setEffect(pauseBlur);
@@ -369,11 +369,11 @@ public class GuiController implements Initializable {
 
     public void updateCombo(int combo) {
         if (combo <= 1) comboLabel.setText("");
-        else comboLabel.setText("Combo ×" + combo + " 🔥");
+        else comboLabel.setText("×" + combo + " 🔥");
     }
 
     public void bindScore(IntegerProperty scoreintegerProperty) {
-        scoreLabel.textProperty().bind(scoreintegerProperty.asString("Score: %d"));
+        scoreLabel.textProperty().bind(scoreintegerProperty.asString("%d"));
     }
 
     public void gameOver() {
@@ -506,7 +506,7 @@ public class GuiController implements Initializable {
 
     public void updateLevel(int level) {
         if (levelLabel != null) {
-            levelLabel.setText("LEVEL  " + level);
+            levelLabel.setText(String.valueOf(level));
         }
     }
 
@@ -540,7 +540,7 @@ public class GuiController implements Initializable {
 
     public void updateLinesCleared(int totalLines) {
         if (linesLabel != null) {
-            linesLabel.setText("Cleared: " + totalLines);
+            linesLabel.setText(String.valueOf(totalLines));
         }
     }
     public void onStartClicked() {
