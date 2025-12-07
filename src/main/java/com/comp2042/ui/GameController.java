@@ -1,5 +1,10 @@
-package com.comp2042;
+package com.comp2042.ui;
 
+import com.comp2042.logic.Board;
+import com.comp2042.logic.MatrixOperations;
+import com.comp2042.logic.SimpleBoard;
+import com.comp2042.logic.ViewData;
+import com.comp2042.logic.events.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
@@ -35,6 +40,8 @@ public class GameController implements InputEventListener {
     // --------------------------------------------------------
     @Override
     public DownData onDownEvent(MoveEvent event) {
+        viewGuiController.timeLine.setRate(board.getFallSpeed());
+
 
         boolean canMove = board.moveBrickDown();
 
@@ -86,12 +93,14 @@ public class GameController implements InputEventListener {
                 // ⭐ 统计并更新总消行数（onDownEvent）⭐
                 totalLinesCleared += removedCount;
                 viewGuiController.updateLinesCleared(totalLinesCleared);
+                // ⭐⭐ 这里刷新 Level
+                viewGuiController.updateLevel(board.getLevelManager().getLevel());
 
 
 
                 // Level
-                board.getLevelManager().addClearedLines(removedCount);
-                updateTimelineSpeed();             // ⭐ CRITICAL
+
+                            // ⭐ CRITICAL
 
                 // New brick
                 if (board.createNewBrick()) {
@@ -170,6 +179,8 @@ public class GameController implements InputEventListener {
     // --------------------------------------------------------
     @Override
     public DownData onHardDrop() {
+        viewGuiController.timeLine.setRate(board.getFallSpeed());
+
 
         if (isPaused) return null;
 
@@ -204,9 +215,11 @@ public class GameController implements InputEventListener {
                 totalLinesCleared += removedCount;
                 viewGuiController.updateLinesCleared(totalLinesCleared);
 
+                // ⭐⭐ 这里刷新 Level
+                viewGuiController.updateLevel(board.getLevelManager().getLevel());
 
-                board.getLevelManager().addClearedLines(removedCount);
-                updateTimelineSpeed();             // ⭐ CRITICAL
+
+                // ⭐ CRITICAL
 
                 if (board.createNewBrick()) {
                     viewGuiController.gameOver();
@@ -240,7 +253,7 @@ public class GameController implements InputEventListener {
         viewGuiController.refreshBrick(vd);
         viewGuiController.refreshGhost(vd, board.getGhostY());
 
-        updateTimelineSpeed();     // ⭐ MUST — keep speed consistent
+             // ⭐ MUST — keep speed consistent
 
         return null;
     }
@@ -260,21 +273,7 @@ public class GameController implements InputEventListener {
     // --------------------------------------------------------
     //    UPDATE TIMELINE SPEED
     // --------------------------------------------------------
-    private void updateTimelineSpeed() {
 
-        int speed = board.getLevelManager().getCurrentSpeed();
-
-        // IMPORTANT: rebuild timeline
-        viewGuiController.timeLine.stop();
-        viewGuiController.timeLine = new Timeline(
-                new KeyFrame(Duration.millis(speed),
-                        e -> onDownEvent(new MoveEvent(EventType.DOWN, EventSource.THREAD)))
-        );
-        viewGuiController.timeLine.setCycleCount(Timeline.INDEFINITE);
-        viewGuiController.timeLine.play();
-
-        viewGuiController.updateLevel(board.getLevelManager().getLevel());
-    }
 
     // --------------------------------------------------------
     //    PLAY CLEAR ANIMATION
@@ -293,7 +292,7 @@ public class GameController implements InputEventListener {
         anim.setOnFinished(e -> {
 
             after.run();              // do final clear, score, spawn brick
-            updateTimelineSpeed();    // ⭐ critical: restore falling speed
+             // ⭐ critical: restore falling speed
         });
 
         anim.play();

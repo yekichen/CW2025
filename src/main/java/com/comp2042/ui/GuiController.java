@@ -1,5 +1,7 @@
-package com.comp2042;
+package com.comp2042.ui;
 
+import com.comp2042.logic.ViewData;
+import com.comp2042.logic.events.*;
 import javafx.scene.effect.GaussianBlur;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
@@ -25,7 +27,6 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 import javafx.scene.control.Label;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;

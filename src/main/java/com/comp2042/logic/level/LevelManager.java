@@ -33,5 +33,9 @@ public class LevelManager {
         int speed = 800 - (level - 1) * 50;
         return Math.max(speed, 200);   // 不低于 200ms
     }
+    // 根据等级返回 Timeline 的速率（越大越快）
+    public double getFallSpeed() {
+        return 1.0 + (level - 1) * 0.2; // 等级越高，下落越快
+    }
 
 }
