@@ -1,12 +1,20 @@
-Tetris FX — COMP2042 Coursework
+🌟 Tetris FX — COMP2042 Coursework
 1. Overview
 
-This project is an enhanced and refactored version of the COMP2042 Tetris coursework, implemented using JavaFX.
-The game features clean architecture, improved gameplay mechanics, meaningful additions, and a fully modernised design.
+Tetris FX is a fully refactored and enhanced version of the COMP2042 Tetris coursework, built with JavaFX and modern software engineering principles.
+The project demonstrates:
 
-The goal of this work is to demonstrate strong software engineering principles through
-refactoring, feature extensions, and unit testing.
+Clean architecture
 
+Strong separation of concerns
+
+Meaningful gameplay improvements
+
+Feature extensions
+
+Comprehensive unit testing
+
+This submission goes significantly beyond the original template, delivering a polished and maintainable Tetris implementation.
 2. Refactoring Summary (Key Changes)
 
 This coursework required significant restructuring of the original codebase.
@@ -25,12 +33,15 @@ This makes responsibilities explicit and simplifies navigation.
 2.2 MVC Architecture & Separation of Concerns
 
 The redesigned structure follows the Model–View–Controller pattern:
-| Component                       | Responsibility                                                           |
-| ------------------------------- | ------------------------------------------------------------------------ |
-| **SimpleBoard (Model)**         | Board rules, movement, collision, ghost logic, row clearing, hold system |
-| **GameController (Controller)** | Translates user events into actions, updates model, manages game flow    |
-| **GuiController (View)**        | Rendering, animations, layout, input handling                            |
-All gameplay logic originally located inside GuiController was fully removed and relocated into GameController and SimpleBoard.
+
+| Component                       | Responsibility                                                            |
+| ------------------------------- | -------------------------------------------------------------------------- |
+| **SimpleBoard (Model)**        | Board rules, movement, collision detection, ghost logic, row clearing, hold system |
+| **GameController (Controller)** | Translates user input into actions, updates the model, manages game flow   |
+| **GuiController (View)**        | Rendering, animations, UI layout, event handling                           |
+
+All gameplay logic originally located inside `GuiController` was fully removed and relocated  
+into `GameController` and `SimpleBoard`.  
 This is a major part of the refactoring mark.
 
 2.3 LevelManager (New Class Extraction)
@@ -264,6 +275,7 @@ SimpleBoard --> BrickGenerator
 SimpleBoard --> BrickRotator
 SimpleBoard --> LevelManager
 SimpleBoard --> Score
+```
 
 6. How to Run the Game
 
@@ -287,24 +299,40 @@ mvn javafx:run
 
 Below are key UI screens showcasing the enhanced TetrisFX gameplay experience.
 
- Start Screen
-Start Screen
-<img src="docs/start.png" width="280"/>
-A clean neon-style start screen with blinking “Press Start to Begin”.
+---
 
- Hold Feature
-Hold Feature	Description
-<img src="docs/hold.png" width="280"/>	The Hold system lets the player store a piece and swap it anytime. The hold panel updates instantly.
+### 🎮 Start Screen
 
- Pause Screen
-Pause Mode
-<img src="docs/pause.png" width="280"/>
-Pause applies a Gaussian blur background + center PAUSED fade-in animation.
+<img src="docs/start.png" width="300"/>
 
- Game Over Screen
-Game Over
-<img src="docs/game_over.png" width="280"/>
-The game ends with a fade-in Game Over panel and darkened background.
+A clean neon-style start screen with a blinking “Press Start to Begin” message.
+
+---
+
+### 📦 Hold Feature
+
+<img src="docs/hold.png" width="300"/>
+
+The Hold system lets the player store a piece and swap it once per turn.  
+The Hold panel updates instantly when a piece is stored.
+
+---
+
+### ⏸️ Pause Screen
+
+<img src="docs/pause.png" width="300"/>
+
+Pause mode applies a soft **Gaussian blur** to the background and displays  
+a centered **PAUSED** message with a smooth fade-in animation.
+
+---
+
+### 💀 Game Over Screen
+
+<img src="docs/game_over.png" width="300"/>
+
+The game ends with a dimmed background and a fade-in **Game Over** panel  
+showing Restart and Quit options.
 
 8. Conclusion
 
