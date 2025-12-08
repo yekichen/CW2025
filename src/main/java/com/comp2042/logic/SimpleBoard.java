@@ -45,17 +45,31 @@ public class SimpleBoard implements Board {
 
     @Override
     public boolean moveBrickDown() {
-        int[][] currentMatrix = MatrixOperations.copy(currentGameMatrix);
-        Point p = new Point(currentOffset);
-        p.translate(0, 1);
-        boolean conflict = MatrixOperations.intersect(currentMatrix, brickRotator.getCurrentShape(), (int) p.getX(), (int) p.getY());
-        if (conflict) {
-            return false;
-        } else {
-            currentOffset = p;
-            return true;
+
+        Point next = new Point(currentOffset);
+        next.translate(0, 1);
+
+        // 如果下一步会冲突 → 落地
+        if (MatrixOperations.intersect(currentGameMatrix,
+                brickRotator.getCurrentShape(),
+                next.x, next.y)) {
+
+            // 1️⃣ 合并到背景
+            currentGameMatrix = MatrixOperations.merge(
+                    currentGameMatrix,
+                    brickRotator.getCurrentShape(),
+                    currentOffset.x,
+                    currentOffset.y
+            );
+
+            return false;  // 告诉 GameController：我落地了！
         }
+
+        // 没冲突 → 正常下降
+        currentOffset = next;
+        return true;
     }
+
 
 
     @Override

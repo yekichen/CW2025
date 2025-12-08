@@ -291,9 +291,12 @@ public class GameController implements InputEventListener {
 
         anim.setOnFinished(e -> {
 
-            after.run();              // do final clear, score, spawn brick
-             // ⭐ critical: restore falling speed
+            after.run();   // 清行、更新 UI、创建新砖
+
+            // ⭐⭐ 动画完毕恢复自动下落 ⭐⭐
+            viewGuiController.timeLine.play();
         });
+
 
         anim.play();
     }
