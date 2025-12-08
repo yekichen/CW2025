@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"com.comp2042.logic"},{"l":"com.comp2042.logic.bricks"},{"l":"com.comp2042.logic.events"},{"l":"com.comp2042.logic.level"},{"l":"com.comp2042.ui"},{"l":"所有程序包","u":"allpackages-index.html"}];updateSearchResults();
