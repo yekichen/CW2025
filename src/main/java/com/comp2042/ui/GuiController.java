@@ -596,43 +596,38 @@ public class GuiController implements Initializable {
 
         gameStarted = true;
 
-        // ⭐ 1. 隐藏开始提示
+        // 隐藏开始文字
         if (pressStartText != null) pressStartText.setVisible(false);
 
-        // ⭐ 2. 强制退出暂停状态
+        // 强制退出暂停模式
         isPause.set(false);
-
-        // ⭐ 移除模糊
         pauseBlur.setRadius(0);
 
-        // ⭐ 隐藏暂停文字
         if (pauseText != null) {
             pauseText.setVisible(false);
             pauseText.setOpacity(0);
         }
+        if (pauseLayer != null) pauseLayer.setVisible(false);
 
-        // ⭐ 隐藏暂停层
-        if (pauseLayer != null) {
-            pauseLayer.setVisible(false);
-        }
-
-        // ⭐ 3. 重置游戏
+        // 重置游戏
         eventListener.createNewGame();
 
-        // ⭐ 4. 复原界面
-        gamePanel.setOpacity(1);
-        brickPanel.setOpacity(1);
-
-        // ⭐ 5. 时间轴重启
+        // timeline 重启
         timeLine.stop();
         timeLine.play();
 
-        // ⭐ 6. 恢复按钮（Pause、Restart 可用）
+        // ⭐ 恢复 BGM 到开头，不用 stop()
+        if (bgmPlayer != null) {
+            bgmPlayer.seek(Duration.ZERO);
+            bgmPlayer.play();
+        }
+
         btnPause.setDisable(false);
         btnRestart.setDisable(false);
 
         gamePanel.requestFocus();
     }
+
 
 
 
