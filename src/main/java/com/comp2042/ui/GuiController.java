@@ -83,6 +83,10 @@ public class GuiController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+        btnPause.setDisable(true);
+        btnRestart.setDisable(true);
+
+
         pressStartText.setVisible(true);
 
         Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
@@ -378,6 +382,8 @@ public class GuiController implements Initializable {
     }
 
     public void gameOver() {
+        btnPause.setDisable(true); // 游戏结束不能暂停
+
         timeLine.stop();
         isGameOver.set(true);
         isPause.set(false);
@@ -545,6 +551,9 @@ public class GuiController implements Initializable {
         }
     }
     public void onStartClicked() {
+        btnPause.setDisable(false);
+        btnRestart.setDisable(false);
+
 
         // 1️⃣ 游戏已经开始且暂停 → 调用 togglePause() 恢复游戏（含淡出动画）
         if (gameStarted && isPause.get()) {
@@ -579,18 +588,52 @@ public class GuiController implements Initializable {
     }
 
 
-
-
-
     public void onPauseClicked() {
         togglePause();
     }
 
     public void onRestartClicked() {
+
         gameStarted = true;
+
+        // ⭐ 1. 隐藏开始提示
         if (pressStartText != null) pressStartText.setVisible(false);
-        newGame(null);
+
+        // ⭐ 2. 强制退出暂停状态
+        isPause.set(false);
+
+        // ⭐ 移除模糊
+        pauseBlur.setRadius(0);
+
+        // ⭐ 隐藏暂停文字
+        if (pauseText != null) {
+            pauseText.setVisible(false);
+            pauseText.setOpacity(0);
+        }
+
+        // ⭐ 隐藏暂停层
+        if (pauseLayer != null) {
+            pauseLayer.setVisible(false);
+        }
+
+        // ⭐ 3. 重置游戏
+        eventListener.createNewGame();
+
+        // ⭐ 4. 复原界面
+        gamePanel.setOpacity(1);
+        brickPanel.setOpacity(1);
+
+        // ⭐ 5. 时间轴重启
+        timeLine.stop();
+        timeLine.play();
+
+        // ⭐ 6. 恢复按钮（Pause、Restart 可用）
+        btnPause.setDisable(false);
+        btnRestart.setDisable(false);
+
+        gamePanel.requestFocus();
     }
+
 
 
     public void onQuitClicked() {
